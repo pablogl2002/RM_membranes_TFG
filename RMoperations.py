@@ -1,5 +1,4 @@
 
-
 def suc(i):
     ''' Incrementa en una unidad el contenido del registro Ri 
             [i] <- [i] + 1
@@ -16,4 +15,3 @@ def pre(i):
             sigue la ejecución
     '''
     pass
-
