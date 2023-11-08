@@ -4,7 +4,7 @@ from tkinter import scrolledtext
 
 
 def get_code():
-    l = [a for a in code_textbox.get("1.0", "end-1c").split('\n') if a != '']
+    l = [a for a in code_textbox.get("1.0", "end-1c").split("\n|\t") if a != '']
     print(l)
 
 root = tk.Tk()

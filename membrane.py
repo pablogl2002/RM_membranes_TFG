@@ -1,14 +1,18 @@
 
 class Membrane:
 
-    def __init__(self, id, multisets:dict=None, rules:dict=None):
-        self.id = id
-        self.multisets = multisets if multisets != None else {}
-        self.rules = rules if rules != None else {}
-        self.min_prio = 0
+    def __init__(self, id, parent, childs, plasmids, rules:dict={}, objects:dict={}):
+        self.membrane = {
+            "id": id,
+            "parent": parent,
+            "childs": childs,
+            "plasmids": plasmids,
+            "rules": rules,
+            "objects": objects
+        }
 
     def add_rule(self, rule, prio=0):
-        self.rules = self.rules.get(rule, 0) + prio
+        self.membrane["rules"] = self.membrane["rules"].get(rule, 0) + prio
         if self.min_prio < prio: self.min_prio = prio
     
     def iteration(self):
@@ -19,4 +23,3 @@ class Membrane:
                 minor_prior.add((rule, prio))
             else:
                 pass
-        
