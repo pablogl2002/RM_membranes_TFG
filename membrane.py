@@ -11,15 +11,14 @@ class Membrane:
             "objects": objects
         }
 
-    def add_rule(self, rule, prio=0):
-        self.membrane["rules"] = self.membrane["rules"].get(rule, 0) + prio
-        if self.min_prio < prio: self.min_prio = prio
+    def get_rules(self):
+        return self.membrane['rules']
     
-    def iteration(self):
-        act_prio = 0
-        minor_prior = set()
-        for rule, prio in self.rules.items:
-            if prio > act_prio:
-                minor_prior.add((rule, prio))
-            else:
-                pass
+    # def iteration(self):
+    #     act_prio = 0
+    #     minor_prior = set()
+    #     for rule, prio in self.rules.items:
+    #         if prio > act_prio:
+    #             minor_prior.add((rule, prio))
+    #         else:
+    #             pass
