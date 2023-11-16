@@ -2,8 +2,8 @@ from membrane import *
 
 class PSystem:
 
-    def __init__(self, V=[], base_struct="11", membobjects=[], i0=None):
-        self.membNum = 1
+    def __init__(self, V:list=[], base_struct="11", membobjects=[], i0=None):
+        self.alphabet = set(V)
         self.membranes = {}
         self.rules = {}
         self.plasmids = {}
@@ -12,17 +12,20 @@ class PSystem:
         self.gen_struct(base_struct)
 
     def gen_struct(self, struct):
-        open = ''
-        for m in struct:
-            if open == '' or m != open[-1]:
-                parent = None if open == '' else open[-1]
-                self.membranes[self.membNum] = self.membranes.get(self.membNum, Membrane(id=self.membNum, parent=parent, objects={}))
+        open = struct[0]
+        id = int(open)
+        self.membranes[id] = self.membranes.get(id, Membrane(V=self.alphabet, id=id, parent=None, objects='bbc'))
+
+        for m in struct[1:]:
+            if m != open[-1]:
+                self.membranes[int(open[-1])].add_child(id + 1)
+                id = id + 1
+                memb = Membrane(V=self.alphabet, id=id, parent=open[-1], objects='aabc')
+                self.membranes[id] = self.membranes.get(id, memb)
                 open = open + m
-                self.membNum = self.membNum + 1
             else:
                 open = open[:-1]
 
         if open != '':
-            self.membNum = 1
             self.membranes = {}
             print('Incorrect membrane structure')
