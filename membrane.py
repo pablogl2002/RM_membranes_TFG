@@ -8,8 +8,7 @@ class Membrane:
         self.rules = set()
         self.plasmids = set()
         self.objects = {}
-        for obj in V:
-            self.objects[obj] = self.objects.get(obj, 0)
+        self.add_objects(objects)
 
     def add_child(self, child:int):
         self.childs.add(child)
@@ -27,6 +26,14 @@ class Membrane:
             self.rules.add(plasmid)
     
     def add_objects(self, objects:str):
-        suma = sum([objects.count(v) for v in self.V])
+        #suma = sum([objects.count(v) for v in self.V])
+        #if suma != len(objects):
+        suma = 0
+        prev_objs = self.objects
+        for obj in self.alphabet:
+            count = objects.count(obj)
+            self.objects[obj] = self.objects.get(obj, 0) + count
+            suma = suma + count
         if suma != len(objects):
-            pass
+            self.objects = prev_objs
+            print(f'Objects given not in alphabet({self.alphabet})')
