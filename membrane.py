@@ -11,6 +11,7 @@ class Membrane:
         self.rules = {}
         self.plasmids = set()
         self.objects = {}
+        self.empty = True
         self.add_objects(objects)
         self.add_rules(rules)
 
@@ -29,15 +30,17 @@ class Membrane:
             self.rules.add(plasmid)
     
     def add_objects(self, objects:str):
-        suma = 0
-        prev_objs = self.objects
-        for obj in self.alphabet:
-            count = objects.count(obj)
-            self.objects[obj] = self.objects.get(obj, 0) + count
-            suma = suma + count
-        if suma != len(objects):
-            self.objects = prev_objs
-            print(f'Objects given not in alphabet({self.alphabet})')
+        if len(objects) != 0:
+            self.empty = False
+            suma = 0
+            prev_objs = self.objects
+            for obj in self.alphabet:
+                count = objects.count(obj)
+                self.objects[obj] = self.objects.get(obj, 0) + count
+                suma = suma + count
+            if suma != len(objects):
+                self.objects = prev_objs
+                print(f'Objects given not in alphabet({self.alphabet})')
 
     def feasible_rules(self):
         feasible_r = set()
@@ -56,19 +59,19 @@ class Membrane:
             if aux: feasible_r.add(rule)
         return feasible_r
 
-    def apply_rule(self, rules:list):
-        id = random.choice(rules)
-        lhs, rhs = self.rules[id]
+    # def apply_rule(self, rules:list):
+    #     id = random.choice(rules)
+    #     lhs, rhs = self.rules[id]
         
-        for obj in lhs:
-            self.objects[obj] = self.objects[obj] - 1
+    #     for obj in lhs:
+    #         self.objects[obj] = self.objects[obj] - 1
         
-        for i in enumerate(rhs):
-            if rhs[i] == '.':   # disolver membrana
-                # return 'dissolve', self.id 
-                pass
-            if rhs[i] != rhs[-1] and rhs[i + 1].isdigit():  # objecto in (id membrana) o out (0)
-                pass
-            else:   # adicion de objetos
-                self.objects[rhs[i]] = self.objects.get(rhs[i], 0) + 1
+    #     for i in enumerate(rhs):
+    #         if rhs[i] == '.':   # disolver membrana
+    #             # return 'dissolve', self.id 
+    #             pass
+    #         elif rhs[i] != rhs[-1] and rhs[i + 1].isdigit():  # objecto in (id membrana) o out (0)
+    #             pass
+    #         else:   # adicion de objetos
+    #             self.objects[rhs[i]] = self.objects.get(rhs[i], 0) + 1
         
