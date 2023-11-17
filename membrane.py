@@ -1,3 +1,5 @@
+import random
+
 class Membrane:
 
     def __init__(self, V, id:int, parent:int=None, objects:str='', rules:list=[]):
@@ -12,12 +14,10 @@ class Membrane:
         self.add_objects(objects)
         self.add_rules(rules)
 
+    # para eliminar entradas de plasmidos en rules añadir set ids_reglas plasmidos y con rules.pop(id) o rules.del(id) se elimina la entrada al dict
+
     def add_child(self, child:int):
         self.childs.add(child)
-
-    def add_childs(self, childs:list):
-        for child in childs:
-            self.childs.add(child)
     
     def add_rules(self, rules:list):
         for rule in rules:
@@ -42,30 +42,33 @@ class Membrane:
     def feasible_rules(self):
         feasible_r = set()
         for rule in self.rules.keys():
-            #print(self.rules[rule][0])
             aux = True
             for obj in self.alphabet:
-                #print(f'self.objects[{obj}] | self.rules[{rule}].count({obj}) ',self.objects[obj], self.rules[rule][0].count(obj))
                 if self.objects[obj] < self.rules[rule][0].count(obj):
                     aux = False
                     break
             if aux:
                 print(self.rules[rule][1])
                 for obj in self.rules[rule][1]:
-                    if (not(obj.isdigit()) and obj not in self.alphabet) or (obj.isdigit() and int(obj) not in self.childs and int(obj) != 0):
+                    if (not(obj.isdigit()) and obj not in self.alphabet and obj != '.') or (obj.isdigit() and int(obj) not in self.childs and int(obj) != 0):
                         aux = False
                         break
             if aux: feasible_r.add(rule)
         return feasible_r
-    
-    # def feasible_rules2(self):
-    #     feasible_r = set()
-    #     for rule in self.rules.keys():
-    #         #print(self.rules[rule][0])
-    #         aux = True
-    #         for obj in self.alphabet:
-    #             #print(f'self.objects[{obj}] | self.rules[{rule}].count({obj}) ',self.objects[obj], self.rules[rule][0].count(obj))
-    #             if self.objects[obj] < self.rules[rule][0].count(obj):
-    #                 aux = False
-    #         if aux: feasible_r.add(rule)
-    #     return feasible_r
+
+    def apply_rule(self, rules:list):
+        id = random.choice(rules)
+        lhs, rhs = self.rules[id]
+        
+        for obj in lhs:
+            self.objects[obj] = self.objects[obj] - 1
+        
+        for i in enumerate(rhs):
+            if rhs[i] == '.':   # disolver membrana
+                # return 'dissolve', self.id 
+                pass
+            if rhs[i] != rhs[-1] and rhs[i + 1].isdigit():  # objecto in (id membrana) o out (0)
+                pass
+            else:   # adicion de objetos
+                self.objects[rhs[i]] = self.objects.get(rhs[i], 0) + 1
+        
