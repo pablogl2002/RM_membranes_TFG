@@ -12,14 +12,14 @@ class PSystem:
         # for memb in self.membranes.keys():
         #     print(self.membranes[memb].feasible_rules())
         
-        print(self.membranes[2].feasible_rules())
+        #print(self.membranes[2].feasible_rules())
 
-        # while(self.membranes[i0].empty):
-        #     self.evolve_iteration()
-        #     print("--------------------------------------------------------------------------------------------")
-        #     print(self.membranes)
-        #     for id, memb in self.membranes.items():
-        #        print(f'membrana : {id} con objetos: {memb.objects}')
+        while(self.membranes[i0].empty):
+            self.evolve_iteration()
+            print("--------------------------------------------------------------------------------------------")
+            print(self.membranes)
+            for id, memb in self.membranes.items():
+               print(f'membrana : {id} con objetos: {memb.objects}')
             
 
     def gen_struct(self, struct, m_objects, m_rules):
@@ -40,12 +40,12 @@ class PSystem:
         if open != '':
             self.membranes = {}
             print('Incorrect membrane structure')
-
+    
     def evolve_iteration(self):
         feasible_rules = []
         for id, memb in self.membranes.items():
             aux = memb.feasible_rules()
-            if aux.len != 0: feasible_rules.append((id, aux)) 
+            if len(aux) != 0: feasible_rules.append((id, aux)) 
 
         memb_id, f_rules = random.choice(feasible_rules)
         rule_id = random.choice(f_rules)
@@ -72,7 +72,7 @@ class PSystem:
                         self.membranes[rhs[i+1]].objects[obj] = self.membranes[rhs[i+1]].objects[obj] + 1
                 else:   # adicion de objetos
                     self.membranes[memb_id].objects[obj] = self.membranes[memb_id].objects.get(rhs[i], 0) + 1
-
+    
 
     def print_system(self):
         for memb in self.membranes:
