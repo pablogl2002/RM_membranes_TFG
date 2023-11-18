@@ -62,4 +62,4 @@ class Membrane:
                         break
             if aux: feasible_r.add(rule)
         return feasible_r
-        
+    

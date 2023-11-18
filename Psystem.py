@@ -3,12 +3,33 @@ from membrane import *
 class PSystem:
 
     def __init__(self, V:list=[], base_struct="11", m_objects=[], m_rules=[], i0=1):
+        '''
+        PSystem class constructor.
+
+        :param V: System's alphabet
+        :type V: list
+
+        :param base_struct: Initial system's structure 
+        :type base_struct: str
+
+        :param m_objects: Membrane's objects. Structure [{obj m1}'aab',{obj m2}'bba',...]
+        :type m_objects: str list
+
+        :param m_rules: Membrane's rules. Structure [[{rules m1}(lhs,rhs),(lhs,rhs)],[{rules m2}(lhs,rhs),(lhs,rhs)],...]
+        :type m_rules:  tuple list list
+
+        :param i0: output membrane
+        :type i0: int 
+        '''
+
         self.alphabet = set(V)
         self.membranes = {}
         self.plasmids = {}
         self.outRegion = i0
 
         self.gen_struct(base_struct, m_objects, m_rules)
+
+        print(self.struct_system())
 
         feasible_rules = self.get_feasible_rules()
         while(feasible_rules != []):
@@ -17,7 +38,7 @@ class PSystem:
             print(self.struct_system())
             feasible_rules = self.get_feasible_rules()
 
-        print("================================================================================================")
+        print("============================================================================================")
         print(self.membranes[i0].objects)
 
 
@@ -96,3 +117,12 @@ class PSystem:
 ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['aa',''], m_rules=[[('a','ab2c2c2'),('aa','a0a0')],[]], i0=2)
 
 # ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['aa',''], m_rules=[[('a','ab2c2c2'),('aa','a0a0')],[]])
+
+# alphabet = ['a','b','c','d','x','n','s']
+# struct = '122331'
+# m_objects = ['aaccccd','']
+# m_rules = [[('dcx','n3'),('d','s3')], [('ac','x'),('ax','c'),('d','d')], []]
+# p_rules = [[(1,2)],[(1,3),(2,3)],[]]
+# i0 = 3
+
+# ps = PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
