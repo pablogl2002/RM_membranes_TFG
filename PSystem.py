@@ -2,32 +2,32 @@ from membrane import *
 
 class PSystem:
 
-    def __init__(self, V:list=[], base_struct="11", m_objects=[], m_rules=[], i0=1):
+    def __init__(self, V:list=[], base_struct="11", m_objects={}, m_rules={}, p_rules={}, i0=1):
         '''
         PSystem class constructor.
 
-        :param V: System's alphabet
-        :type V: list
+        # :param V: System's alphabet
+        # :type V: list
 
-        :param base_struct: Initial system's structure 
-        :type base_struct: str
+        # :param base_struct: Initial system's structure 
+        # :type base_struct: str
 
-        :param m_objects: Membrane's objects. Structure [{obj m1}'aab',{obj m2}'bba',...]
-        :type m_objects: str list
+        # :param m_objects: Membrane's objects. Structure [{obj m1}'aab',{obj m2}'bba',...]
+        # :type m_objects: str list
 
-        :param m_rules: Membrane's rules. Structure [[{rules m1}(lhs,rhs),(lhs,rhs)],[{rules m2}(lhs,rhs),(lhs,rhs)],...]
-        :type m_rules:  tuple list list
+        # :param m_rules: Membrane's rules. Structure [[{rules m1}(lhs,rhs),(lhs,rhs)],[{rules m2}(lhs,rhs),(lhs,rhs)],...]
+        # :type m_rules:  tuple list list
 
-        :param i0: output membrane
-        :type i0: int 
-        '''
+        # :param i0: output membrane
+        # :type i0: int 
+        # '''
 
         self.alphabet = set(V)
         self.membranes = {}
         self.plasmids = {}
         self.outRegion = i0
 
-        self.gen_struct(base_struct, m_objects, m_rules)
+        self.gen_struct(base_struct, m_objects, m_rules, p_rules)
 
         print(self.struct_system())
 
@@ -42,16 +42,16 @@ class PSystem:
         print(self.membranes[i0].objects)
 
 
-    def gen_struct(self, struct, m_objects, m_rules):
+    def gen_struct(self, struct, m_objects, m_rules, p_rules):
         open = struct[0]
         id = int(open)
-        self.membranes[id] = self.membranes.get(id, Membrane(V=self.alphabet, id=id, parent=None, objects=m_objects[id-1], rules=m_rules[id-1]))
+        self.membranes[id] = self.membranes.get(id, Membrane(V=self.alphabet, id=id, parent=None, objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id]))
 
         for m in struct[1:]:
             if m != open[-1]:
                 self.membranes[int(open[-1])].add_child(id + 1)
-                id = id + 1
-                memb = Membrane(V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id-1], rules=m_rules[id-1])
+                id = int(m)
+                memb = Membrane(V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id], rules=m_rules[id], p_rules=[id])
                 self.membranes[id] = self.membranes.get(id, memb)
                 open = open + m
             else:
@@ -101,7 +101,10 @@ class PSystem:
                     self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + 1
 
     def struct_system(self, struct='', id=1):
-        struct = f'[{id}{self.membranes[id].objects}'
+        objects = ''
+        for obj, n in self.membranes[id].objects.items():
+            objects += obj*n 
+        struct = f"[{id} '{objects}' "
         if self.membranes[id].childs != {}:
             for id_child in self.membranes[id].childs:
                 struct += self.struct_system(struct, id_child)
@@ -114,15 +117,40 @@ class PSystem:
 # ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['a',''], m_rules=[[('a','b2')],[]])
 # ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['','a'], m_rules=[[('a','b2')],[('a','c0')]])
 # ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['','b'], m_rules=[[],[('b','a'), ('a','c.')]])
-ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['aa',''], m_rules=[[('a','ab2c2c2'),('aa','a0a0')],[]], i0=2)
+# ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['aa',''], m_rules=[[('a','ab2c2c2'),('aa','a0a0')],[]], i0=2)
 
 # ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['aa',''], m_rules=[[('a','ab2c2c2'),('aa','a0a0')],[]])
 
+alphabet = ['a','b','c']
+struct = '1221'
+m_objects = {1:'aa',
+             2:''}
+r_1 = {1:('a','ab2c2c2'),
+       2:('aa','a0a0')}
+m_rules = {1:r_1,
+           2:{}}
+p_rules = {1:{},2:{}}
+
+i0 = 2
+
+
 # alphabet = ['a','b','c','d','x','n','s']
 # struct = '122331'
-# m_objects = ['aaccccd','']
-# m_rules = [[('dcx','n3'),('d','s3')], [('ac','x'),('ax','c'),('d','d')], []]
-# p_rules = [[(1,2)],[(1,3),(2,3)],[]]
+# m_objects = {1:'aaccccd',
+#              2:'',
+#              3:''}
+# r_1 = {1:('dcx','n3'),
+#        2:('d','s3')}
+# r_2 = {1:('ac','x'),
+#        2:('ax','c'),
+#        3:('d','d')}
+# m_rules = {1:r_1,
+#            2:r_2,
+#            3:{}}
+# p_rules = {1 : [(1,2)],
+#            2 : [(1,3),(2,3)],
+#            3 : []}
 # i0 = 3
 
-# ps = PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
+
+ps = PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)

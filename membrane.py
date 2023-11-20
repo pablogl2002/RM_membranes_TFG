@@ -2,13 +2,14 @@ import random
 
 class Membrane:
 
-    def __init__(self, V, id:int, parent:int=None, objects:str='', rules:list=[]):
+    def __init__(self, V, id:int, parent:int=None, objects:str='', rules={}, p_rules={}):
         self.alphabet = V
         self.id = id
         self.parent = parent
         self.childs = set()
         self.rules_id = 0
-        self.rules = {}
+        self.rules = rules
+        self.p_rules = p_rules
         self.plasmids = set()
         self.objects = {}
         self.rhs_alphabet = V.copy()
@@ -17,7 +18,7 @@ class Membrane:
         self.rhs_alphabet.add('.')
 
         self.add_objects(objects)
-        self.add_rules(rules)
+        # self.add_rules(rules)
 
     # para eliminar entradas de plasmidos en rules añadir set ids_reglas plasmidos y con rules.pop(id) o rules.del(id) se elimina la entrada al dict
 
@@ -25,10 +26,10 @@ class Membrane:
         self.childs.add(child)
         self.rhs_alphabet.add(str(child))
     
-    def add_rules(self, rules:list):
-        for rule in rules:
-            self.rules_id = self.rules_id + 1
-            self.rules[self.rules_id] = self.rules.get(self.rules_id, rule)
+    # def add_rules(self, rules:list):
+    #     for rule in rules:
+    #         self.rules_id = self.rules_id + 1
+    #         self.rules[self.rules_id] = self.rules.get(self.rules_id, rule)
     
     def add_plasmids(self, plasmids:list):
         for plasmid in plasmids:
@@ -49,17 +50,22 @@ class Membrane:
 
     def feasible_rules(self):
         feasible_r = set()
+        # non_prio = set()
+        # for i1, i2 in self.p_rules:
+        #     if self.is_feasible(self.rules[i1]):
+        #         feasible_r.add(i1)
+        #         non_prio.add(i2)
+
         for rule in self.rules.keys():
-            aux = True
-            for obj in self.alphabet:
-                if self.objects[obj] < self.rules[rule][0].count(obj):
-                    aux = False
-                    break
-            if aux:
-                for obj in self.rules[rule][1]:
-                    if obj not in self.rhs_alphabet:
-                        aux = False
-                        break
-            if aux: feasible_r.add(rule)
+            # if rule not in feasible_r and rule not in non_prio and self.is_feasible(rule):
+            feasible_r.add(rule)
         return feasible_r
     
+    def is_feasible(self, rule):
+        for obj in self.alphabet:
+            if self.objects[obj] < self.rules[rule][0].count(obj):
+                return False
+        for obj in self.rules[rule][1]:
+            if obj not in self.rhs_alphabet:
+                return False
+        return True
