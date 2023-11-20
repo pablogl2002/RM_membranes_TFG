@@ -1,4 +1,3 @@
-import random
 
 class Membrane:
 
@@ -43,7 +42,7 @@ class Membrane:
 
     def add_child(self, child:int):
         '''
-        Add child to the membrane
+        Add child to the membrane.
 
         :param child: child's id
         :type child: int
@@ -54,7 +53,7 @@ class Membrane:
     
     def add_plasmids(self, plasmids:list):
         '''
-        Add plasmid to the membrane
+        Add plasmid to the membrane.
 
         :param plasmids: list of plasmids' id 
         :type plasmids: list
@@ -65,7 +64,7 @@ class Membrane:
     
     def add_objects(self, objects:str):
         '''
-        Add objects to the membranes
+        Add objects to the membranes.
 
         :param objects: objects to add in the membrane
         :type objects: str
@@ -83,7 +82,7 @@ class Membrane:
 
     def feasible_rules(self):
         '''
-        Get the feasible rules from the membrane
+        Get the feasible rules from the membrane.
 
         :return feasible_r
 
@@ -104,7 +103,7 @@ class Membrane:
     
     def is_feasible(self, rule):
         '''
-        Get if a rule is feasible
+        Get if a rule is feasible.
 
         :return boolean
 

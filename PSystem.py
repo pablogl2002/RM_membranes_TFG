@@ -1,3 +1,4 @@
+import random
 from membrane import *
 
 class PSystem:
@@ -49,7 +50,7 @@ class PSystem:
 
     def gen_struct(self, struct, m_objects, m_rules, p_rules):
         '''
-        Creates system structure
+        Creates system structure.
 
         :param struct: initial structure
         :type struct: str
@@ -93,7 +94,7 @@ class PSystem:
 
     def get_feasible_rules(self):
         '''
-        Get feasible rules from all membranes in the system
+        Get feasible rules from all membranes in the system.
 
         :return feasible_rules 
 
@@ -109,7 +110,7 @@ class PSystem:
 
     def evolve(self, feasible_rules):
         '''
-        Makes an iteration on the system choosing a random rule from given rules (feasible_rules)
+        Makes an iteration on the system choosing a random rule from given rules (feasible_rules).
 
         :param feasible_rules: system's feasible rules
         :type feasible_rules: tuple (memb_id, rules_set) -> memb_id:int | rules_set:list
@@ -168,7 +169,7 @@ class PSystem:
 
     def struct_system(self, struct='', id=1):
         '''
-        Recursive function to print system's structure
+        Recursive function to print system's structure.
 
         :param struct: acumulative structure to do it in a recursive way 
         :type struct: str
