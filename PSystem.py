@@ -31,12 +31,15 @@ class PSystem:
 
         print(self.struct_system())
 
+        print("--------------------------------------------------------------------------------------------")
+
         feasible_rules = self.get_feasible_rules()
         while(feasible_rules != []):
             self.evolve(feasible_rules)
-            print("--------------------------------------------------------------------------------------------")
             print(self.struct_system())
             feasible_rules = self.get_feasible_rules()
+            print("--------------------------------------------------------------------------------------------")
+
 
         print("============================================================================================")
         print(self.membranes[i0].objects)
@@ -51,7 +54,7 @@ class PSystem:
             if m != open[-1]:
                 self.membranes[int(open[-1])].add_child(id + 1)
                 id = int(m)
-                memb = Membrane(V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id], rules=m_rules[id], p_rules=[id])
+                memb = Membrane(V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id])
                 self.membranes[id] = self.membranes.get(id, memb)
                 open = open + m
             else:
@@ -71,7 +74,10 @@ class PSystem:
     def evolve(self, feasible_rules):
         memb_id, f_rules = random.choice(feasible_rules)
         rule_id = random.choice(list(f_rules))
-        
+
+        print(f'memb_id: {memb_id} | rule_id: {rule_id}')
+        print(f'rule: {self.membranes[memb_id].rules[rule_id]}')
+
         lhs, rhs = self.membranes[memb_id].rules[rule_id]
 
         for obj in lhs:
@@ -94,8 +100,6 @@ class PSystem:
                         self.membranes[id].objects[rhs[i]] = self.membranes[id].objects[rhs[i]] + 1
                     elif id == 0:
                         if parent_id != None:
-                            print('id == 0')
-                            print(self.membranes[parent_id])
                             self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + 1
                 else:
                     self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + 1
@@ -111,39 +115,20 @@ class PSystem:
         struct += f']{id}'
         return struct
 
-
-# from PSystem import *
-# ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['aaaaac','ab'], m_rules=[[('aa','b'),('c','a')],[('c','ca')]])
-# ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['a',''], m_rules=[[('a','b2')],[]])
-# ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['','a'], m_rules=[[('a','b2')],[('a','c0')]])
-# ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['','b'], m_rules=[[],[('b','a'), ('a','c.')]])
-# ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['aa',''], m_rules=[[('a','ab2c2c2'),('aa','a0a0')],[]], i0=2)
-
-# ps = PSystem(V=['a','b','c'], base_struct='1221', m_objects=['aa',''], m_rules=[[('a','ab2c2c2'),('aa','a0a0')],[]])
-
-alphabet = ['a','b','c']
-struct = '1221'
-m_objects = {1:'aa',
-             2:''}
-r_1 = {1:('a','ab2c2c2'),
-       2:('aa','a0a0')}
-m_rules = {1:r_1,
-           2:{}}
-p_rules = {1:{},2:{}}
-
-i0 = 2
-
+# ~ n es divisible entre k
+# n = 14
+# k = 7
 
 # alphabet = ['a','b','c','d','x','n','s']
 # struct = '122331'
-# m_objects = {1:'aaccccd',
-#              2:'',
+# m_objects = {1:'',
+#              2:'a'*n+'c'*k+'d',
 #              3:''}
 # r_1 = {1:('dcx','n3'),
 #        2:('d','s3')}
 # r_2 = {1:('ac','x'),
 #        2:('ax','c'),
-#        3:('d','d')}
+#        3:('d','d.')}
 # m_rules = {1:r_1,
 #            2:r_2,
 #            3:{}}
@@ -151,6 +136,55 @@ i0 = 2
 #            2 : [(1,3),(2,3)],
 #            3 : []}
 # i0 = 3
+
+n = 14
+k = 7
+
+alphabet = ['a','c','x','d']
+struct = '122331'
+m_objects = {1:'',
+             2:'a'*n+'c'*k+'d',
+             3:'a'}
+r_1 = {1:('dcx','a3')}
+r_2 = {1:('ac','x'),
+       2:('ax','c'),
+       3:('d','d.')}
+m_rules = {1:r_1,
+           2:r_2,
+           3:{}}
+p_rules = {1 : [],
+           2 : [(1,3),(2,3)],
+           3 : []}
+i0 = 3
+
+# # ~ n^2
+
+# alphabet = ['a','b','x','c','f']
+# struct = '12334421'
+# m_objects = {1:'',
+#              2:'',
+#              3:'af',
+#              4:''}
+
+# r_2 = {1:('x','b'),
+#        2:('b','bc4'),
+#        3:('ff','af'),
+#        4:('f','a.')}
+
+# r_3 = {1:('a','ab'),
+#        2:('a','x.'),
+#        3:('f','ff')}
+
+# m_rules = {1:{},
+#            2:r_2,
+#            3:r_3,
+#            4:{}}
+
+# p_rules = {1:[],
+#            2:[(3,4)],
+#            3:[],
+#            4:[]}
+# i0 = 4
 
 
 ps = PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
