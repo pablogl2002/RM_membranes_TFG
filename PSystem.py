@@ -34,18 +34,23 @@ class PSystem:
         # genera la estructura dada
         self.gen_struct(base_struct, m_objects, m_rules, p_rules)
 
+        self.while_evolve(50)
+
+
+    def while_evolve(self, iter=2**31):
         # muestra por pantalla cada estado después de aplicar una regla
         print(self.struct_system())
         print("--------------------------------------------------------------------------------------------")
         feasible_rules = self.get_feasible_rules()
-        while(feasible_rules != []):
+        while(iter != 0 and feasible_rules != []):
             self.evolve(feasible_rules)
             print(self.struct_system())
             feasible_rules = self.get_feasible_rules()
             print("--------------------------------------------------------------------------------------------")
+            iter -= 1
         print("============================================================================================")
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
-        print(self.membranes[i0].objects)
+        print(self.membranes[self.outRegion].objects)
 
 
     def gen_struct(self, struct, m_objects, m_rules, p_rules):
@@ -71,10 +76,11 @@ class PSystem:
         self.membranes[id] = self.membranes.get(id, Membrane(V=self.alphabet, id=id, parent=None, objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id]))
         # recorremos todas las posiciones del array de estructura 
         for m in struct[1:]:
+            # print(open)
             # si nos encontramos con un numero diferente al anterior significa que se trata de una membrana hija
             if m != open[-1]:
                 # añadimos un hijo a la membrana padre
-                self.membranes[id].add_child(int(m))
+                self.membranes[int(open[-1])].add_child(int(m))
                 id = int(m) # actualizamos el identificador
                 # creamos la membrana hija con sus parametros correspondientes
                 memb = Membrane(V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id])
@@ -82,6 +88,7 @@ class PSystem:
                 self.membranes[id] = self.membranes.get(id, memb)
                 # añadimos a la variable auxiliar la membrana hija que se ha abierto
                 open += m
+                
             # si es el mismo numero 'cerramos' la membrana
             else:  
                 open = open[:-1]
@@ -121,15 +128,17 @@ class PSystem:
         # selección de una regla aleatoria del conjunto obtenido de la membrana aleatoria
         rule_id = random.choice(list(f_rules))
 
-        # pritea membrana y regla
-        print(f'memb_id: {memb_id} | rule: {self.membranes[memb_id].rules[rule_id]}')
-
         # divide en parte izquierda y derecha la regla
         lhs, rhs = self.membranes[memb_id].rules[rule_id]
 
+        max_possible_i = min([obj for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
+
+        # pritea membrana y regla
+        print(f'n_veces: {max_possible_i} memb_id: {memb_id} | rule: {self.membranes[memb_id].rules[rule_id]}')
+
         # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
         for obj in lhs:
-            self.membranes[memb_id].objects[obj] = self.membranes[memb_id].objects[obj] - 1
+            self.membranes[memb_id].objects[obj] = self.membranes[memb_id].objects[obj] - max_possible_i
         
         # de la membrana elegida sacamos el id de la membrana padre 
         parent_id = self.membranes[memb_id].parent
@@ -145,6 +154,7 @@ class PSystem:
                         for obj in self.alphabet:
                             value = self.membranes[memb_id].objects[obj]
                             self.membranes[parent_id].objects[obj] = self.membranes[parent_id].objects.get(obj, 0) + value
+                    print(memb_id)
                     # eliminamos el hijo disuelto de la membrana padre
                     self.membranes[parent_id].childs.remove(memb_id)
                     # eliminamos la entrada a la membrana disuelta
@@ -155,17 +165,17 @@ class PSystem:
                     # si se encuentra el id entre los id de las membranas hijas
                     if id in self.membranes[memb_id].childs:
                         # añade objeto a la membrana hija
-                        self.membranes[id].objects[rhs[i]] = self.membranes[id].objects[rhs[i]] + 1
+                        self.membranes[id].objects[rhs[i]] = self.membranes[id].objects[rhs[i]] + max_possible_i
                     # si es 0 -> out
                     elif id == 0:
                         # si tiene padre la membrana | si no tiene padre no se añade en ningún sitio
                         if parent_id != None:
                             # saca a la membrana padre el objeto
-                            self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + 1
+                            self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + max_possible_i
                 # caso de adicion a la propia membrana
                 else:
                     # añade objeto a la membrana
-                    self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + 1
+                    self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + max_possible_i
 
     def struct_system(self, struct='', id=1):
         '''
@@ -188,55 +198,55 @@ class PSystem:
         struct += f']{id}'
         return struct
 
-# ~ n es divisible entre k
-n = 14
-k = 7
+# # ~ n es divisible entre k
+# n = 14
+# k = 7
 
-alphabet = ['a','c','x','d']
-struct = '122331'
-m_objects = {1:'',
-             2:'a'*n+'c'*k+'d',
-             3:'a'}
-r_1 = {1:('dcx','a3')}
-r_2 = {1:('ac','x'),
-       2:('ax','c'),
-       3:('d','d.')}
-m_rules = {1:r_1,
-           2:r_2,
-           3:{}}
-p_rules = {1 : [],
-           2 : [(1,3),(2,3)],
-           3 : []}
-i0 = 3
-
-# # ~ n^2
-
-# alphabet = ['a','b','x','c','f']
-# struct = '12334421'
+# alphabet = ['a','c','x','d']
+# struct = '122331'
 # m_objects = {1:'',
-#              2:'',
-#              3:'af',
-#              4:''}
-
-# r_2 = {1:('x','b'),
-#        2:('b','bc4'),
-#        3:('ff','af'),
-#        4:('f','a.')}
-
-# r_3 = {1:('a','ab'),
-#        2:('a','x.'),
-#        3:('f','ff')}
-
-# m_rules = {1:{},
+#              2:'a'*n+'c'*k+'d',
+#              3:'a'}
+# r_1 = {1:('dcx','a3')}
+# r_2 = {1:('ac','x'),
+#        2:('ax','c'),
+#        3:('d','d.')}
+# m_rules = {1:r_1,
 #            2:r_2,
-#            3:r_3,
-#            4:{}}
+#            3:{}}
+# p_rules = {1 : [],
+#            2 : [(1,3),(2,3)],
+#            3 : []}
+# i0 = 3
 
-# p_rules = {1:[],
-#            2:[(3,4)],
-#            3:[],
-#            4:[]}
-# i0 = 4
+# ~ n^2
+
+alphabet = ['a','b','x','c','f']
+struct = '12334421'
+m_objects = {1:'',
+             2:'',
+             3:'af',
+             4:''}
+
+r_2 = {1:('x','b'),
+       2:('b','bc4'),
+       3:('ff','f'),
+       4:('f','a.')}
+
+r_3 = {1:('a','ax'),
+       2:('a','x.'),
+       3:('f','ff')}
+
+m_rules = {1:{},
+           2:r_2,
+           3:r_3,
+           4:{}}
+
+p_rules = {1:[],
+           2:[(3,4)],
+           3:[],
+           4:[]}
+i0 = 4
 
 
 ps = PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
