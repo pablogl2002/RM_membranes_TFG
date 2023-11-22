@@ -1,4 +1,3 @@
-
 class Membrane:
 
     def __init__(self, V, id:int, parent:int=None, objects:str='', rules={}, p_rules={}):
@@ -80,6 +79,7 @@ class Membrane:
             self.objects = prev_objs
             print(f'Objects given not in alphabet({self.alphabet})')
 
+    
     def feasible_rules(self):
         '''
         Get the feasible rules from the membrane.
@@ -87,19 +87,46 @@ class Membrane:
         :return feasible_r
 
         '''
-        feasible_r = set()
-        non_feasible = set()
-        for i1, i2 in self.p_rules:
-            if self.is_feasible(i1):
-                feasible_r.add(i1)
-                non_feasible.add(i2)
-            else:
-                non_feasible.add(i1)
 
-        for rule in self.rules.keys():
-            if rule not in feasible_r and rule not in non_feasible and self.is_feasible(rule):
-                feasible_r.add(rule)
-        return feasible_r
+        aux = {}
+
+        def check_prio(feasible, rule):
+            for i1, i2 in self.p_rules:
+                if i1 == rule: return True
+                elif i2 == rule: 
+                    if i1 not in feasible: return True
+                    else: return False
+            return True
+
+        def promising(feasible, n_feasible, rule):
+            if rule not in feasible and rule not in n_feasible and self.is_feasible(rule) and check_prio(feasible, rule):
+                for l in self.alphabet:
+                    if aux.get(l,0) + self.rules[rule][0].count(l) <= self.objects[l]:
+                        aux[l] = aux.get(l,0) + self.rules[rule][0].count(l)
+                    else: return False
+                return True
+            else: return False
+
+        def backtracking(feasible, n_feasible, index):
+            if index > len(self.rules.keys()):
+                yield feasible.copy()
+            else:
+                # if index not in feasible_r and index not in non_feasible and self.is_feasible(index):
+                if promising(feasible, n_feasible, index):
+                    feasible.add(index)
+                    yield from backtracking(feasible, n_feasible, index + 1)
+                    for l in self.alphabet:
+                        aux[l] = aux.get(l,0) - self.rules[index][0].count(l)
+                    feasible.pop()
+                n_feasible.add(index)
+                yield from backtracking(feasible, n_feasible, index + 1)
+                if len(n_feasible) != 0: n_feasible.pop()
+
+        # for rule in self.rules.keys():
+        #     if rule not in feasible_r and rule not in non_feasible and self.is_feasible(rule):
+        #         feasible_r.add(rule)
+        # return feasible_r
+        yield from backtracking(set(), set(), 1)
     
     def is_feasible(self, rule):
         '''

@@ -34,7 +34,7 @@ class PSystem:
         # genera la estructura dada
         self.gen_struct(base_struct, m_objects, m_rules, p_rules)
 
-        self.while_evolve(50)
+        self.while_evolve(10)
 
 
     def while_evolve(self, iter=2**31):
@@ -42,6 +42,7 @@ class PSystem:
         print(self.struct_system())
         print("--------------------------------------------------------------------------------------------")
         feasible_rules = self.get_feasible_rules()
+        print(feasible_rules)
         while(iter != 0 and feasible_rules != []):
             self.evolve(feasible_rules)
             print(self.struct_system())
@@ -110,9 +111,10 @@ class PSystem:
         # recorre todas las membranas y va añadiendo en feasible_rules las reglas factibles
         for id, memb in self.membranes.items():
             # obtiene las reglas factibles de una membrana
-            aux = memb.feasible_rules()
+            all_f_rules = list(memb.feasible_rules())
+            rules = random.choice(all_f_rules)
             # en el caso de que se obtengan reglas las añade en feasible_rules como una tuplas como una tupla con el identificador de la membrana y las reglas 
-            if len(aux) != 0: feasible_rules.append((id, aux))
+            if len(rules) != 0: feasible_rules.append((id, rules))
         return feasible_rules
 
     def evolve(self, feasible_rules):
@@ -126,56 +128,67 @@ class PSystem:
         # selección de una membrana aleatoria dentro de las posibles con reglas factibles
         memb_id, f_rules = random.choice(feasible_rules)
         # selección de una regla aleatoria del conjunto obtenido de la membrana aleatoria
-        rule_id = random.choice(list(f_rules))
+        #rule_id = random.choice(list(f_rules))
 
-        # divide en parte izquierda y derecha la regla
-        lhs, rhs = self.membranes[memb_id].rules[rule_id]
-
-        max_possible_i = min([obj for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
-
-        # pritea membrana y regla
-        print(f'n_veces: {max_possible_i} memb_id: {memb_id} | rule: {self.membranes[memb_id].rules[rule_id]}')
-
-        # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
-        for obj in lhs:
-            self.membranes[memb_id].objects[obj] = self.membranes[memb_id].objects[obj] - max_possible_i
+        dissolve = False
         
-        # de la membrana elegida sacamos el id de la membrana padre 
-        parent_id = self.membranes[memb_id].parent
-        # recorremos la parte derecha de la regla
-        for i, _ in enumerate(rhs):
-            # si no es un digito
-            if not(rhs[i].isdigit()):
-                # en el caso de que sea un punto disolvemos membrana
-                if rhs[i] == '.':   # disolver
-                    # si existe membrana padre  
-                    if parent_id != None:
-                        # añade los objetos de la membrana a disolver en la membrana padre
-                        for obj in self.alphabet:
-                            value = self.membranes[memb_id].objects[obj]
-                            self.membranes[parent_id].objects[obj] = self.membranes[parent_id].objects.get(obj, 0) + value
-                    print(memb_id)
-                    # eliminamos el hijo disuelto de la membrana padre
-                    self.membranes[parent_id].childs.remove(memb_id)
-                    # eliminamos la entrada a la membrana disuelta
-                    self.membranes.pop(memb_id)
-                # en el caso de que no sea el último objeto de la regla y el siguiente sea un dígito
-                elif i+1 != len(rhs) and rhs[i+1].isdigit():  # in to child | out to parent    
-                    id = int(rhs[i+1])  # membrana hija a la que se introducirán los objetos o bien 0 si out
-                    # si se encuentra el id entre los id de las membranas hijas
-                    if id in self.membranes[memb_id].childs:
-                        # añade objeto a la membrana hija
-                        self.membranes[id].objects[rhs[i]] = self.membranes[id].objects[rhs[i]] + max_possible_i
-                    # si es 0 -> out
-                    elif id == 0:
-                        # si tiene padre la membrana | si no tiene padre no se añade en ningún sitio
+        for rule_id in f_rules:
+
+            if dissolve == True: break
+            
+            # divide en parte izquierda y derecha la regla
+            lhs, rhs = self.membranes[memb_id].rules[rule_id]
+
+            # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla)
+            max_possible_i = min([obj for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
+
+            # pritea membrana y regla
+            print(f'n_veces: {max_possible_i} memb_id: {memb_id} | rule: {self.membranes[memb_id].rules[rule_id]}')
+
+            # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
+            for obj in lhs:
+                self.membranes[memb_id].objects[obj] = self.membranes[memb_id].objects[obj] - max_possible_i
+            
+            # de la membrana elegida sacamos el id de la membrana padre 
+            parent_id = self.membranes[memb_id].parent
+            # recorremos la parte derecha de la regla
+            
+            for i, _ in enumerate(rhs):
+                # si no es un digito
+                if not(rhs[i].isdigit()):
+                    # en el caso de que sea un punto disolvemos membrana
+                    if rhs[i] == '.':   # disolver
+                        # si existe membrana padre  
                         if parent_id != None:
-                            # saca a la membrana padre el objeto
-                            self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + max_possible_i
-                # caso de adicion a la propia membrana
-                else:
-                    # añade objeto a la membrana
-                    self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + max_possible_i
+                            # añade los objetos de la membrana a disolver en la membrana padre
+                            for obj in self.alphabet:
+                                value = self.membranes[memb_id].objects[obj]
+                                self.membranes[parent_id].objects[obj] = self.membranes[parent_id].objects.get(obj, 0) + value
+                        print(memb_id)
+                        # eliminamos el hijo disuelto de la membrana padre
+                        self.membranes[parent_id].childs.remove(memb_id)
+                        # eliminamos la entrada a la membrana disuelta
+                        self.membranes.pop(memb_id)
+
+                        dissolve = True
+
+                    # en el caso de que no sea el último objeto de la regla y el siguiente sea un dígito
+                    elif i+1 != len(rhs) and rhs[i+1].isdigit():  # in to child | out to parent    
+                        id = int(rhs[i+1])  # membrana hija a la que se introducirán los objetos o bien 0 si out
+                        # si se encuentra el id entre los id de las membranas hijas
+                        if id in self.membranes[memb_id].childs:
+                            # añade objeto a la membrana hija
+                            self.membranes[id].objects[rhs[i]] = self.membranes[id].objects[rhs[i]] + max_possible_i
+                        # si es 0 -> out
+                        elif id == 0:
+                            # si tiene padre la membrana | si no tiene padre no se añade en ningún sitio
+                            if parent_id != None:
+                                # saca a la membrana padre el objeto
+                                self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + max_possible_i
+                    # caso de adicion a la propia membrana
+                    else:
+                        # añade objeto a la membrana
+                        self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + max_possible_i
 
     def struct_system(self, struct='', id=1):
         '''
@@ -198,9 +211,9 @@ class PSystem:
         struct += f']{id}'
         return struct
 
-# # ~ n es divisible entre k
-# n = 14
-# k = 7
+# ~ n es divisible entre k
+# n = 49
+# k = 5
 
 # alphabet = ['a','c','x','d']
 # struct = '122331'
