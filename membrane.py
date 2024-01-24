@@ -79,7 +79,34 @@ class Membrane:
             self.objects = prev_objs
             print(f'Objects given not in alphabet({self.alphabet})')
 
+    def feasible_rules(self):
+        applicable_rules = [r for r in self.rules if self.is_feasible(r)]
+        promising = []
+        #print(self.rules)
+        for r in applicable_rules:
+            #print(r)
+            cond = True
+            for r1, r2 in self.p_rules:
+                if r2 == r and self.is_feasible(r1):
+                    cond = False
+            if cond: promising.append(r)
+
+        # comprobar que no haya conflicto entre reglas
+            # es decir que si una regla es a -> x y otra es a -> b, que solo se aplique una
+        self.solve_conflicts(promising)
+
+        feasible = []
+        #print(f"{self.id} {feasible}")
+        # cambiar a feasible cuando solve conflicts devuelva correctamente lo q toca
+        return promising
     
+    def solve_conflicts(self, promising):
+        for r in promising:
+            r1, r2 = self.rules[r]
+            print(f"l {r1} , r {r2}")
+            pass
+
+    """ 
     def feasible_rules(self):
         '''
         Get the feasible rules from the membrane.
@@ -87,19 +114,26 @@ class Membrane:
         :return feasible_r
 
         '''
-
         aux = {}
 
-        def check_prio(feasible, rule):
+        non_feasible = set()
+        for i1, i2 in self.p_rules:
+            if self.is_feasible(i1):
+                non_feasible.add(i2)
+
+        print(non_feasible)
+        
+        # corregir puede estar una regla (r1, r3) y luego (r2, r1)
+        def check_prio(n_feasible, rule):
             for i1, i2 in self.p_rules:
                 if i1 == rule: return True
                 elif i2 == rule: 
-                    if i1 not in feasible: return True
+                    if i1 in n_feasible and i2 not in n_feasible: return True
                     else: return False
             return True
 
         def promising(feasible, n_feasible, rule):
-            if rule not in feasible and rule not in n_feasible and self.is_feasible(rule) and check_prio(feasible, rule):
+            if (rule not in feasible) and (rule not in n_feasible) and self.is_feasible(rule) and check_prio(n_feasible, rule):
                 for l in self.alphabet:
                     if aux.get(l,0) + self.rules[rule][0].count(l) <= self.objects[l]:
                         aux[l] = aux.get(l,0) + self.rules[rule][0].count(l)
@@ -108,7 +142,8 @@ class Membrane:
             else: return False
 
         def backtracking(feasible, n_feasible, index):
-            if index > len(self.rules.keys()):
+            if index > len(self.rules.keys()): # if completo
+                # if factible ?
                 yield feasible.copy()
             else:
                 # if index not in feasible_r and index not in non_feasible and self.is_feasible(index):
@@ -118,15 +153,15 @@ class Membrane:
                     for l in self.alphabet:
                         aux[l] = aux.get(l,0) - self.rules[index][0].count(l)
                     feasible.pop()
-                n_feasible.add(index)
+                else:
+                    n_feasible.add(index)
                 yield from backtracking(feasible, n_feasible, index + 1)
-                if len(n_feasible) != 0: n_feasible.pop()
 
         # for rule in self.rules.keys():
         #     if rule not in feasible_r and rule not in non_feasible and self.is_feasible(rule):
         #         feasible_r.add(rule)
         # return feasible_r
-        yield from backtracking(set(), set(), 1)
+        yield from backtracking(set(), non_feasible, 1) """
     
     def is_feasible(self, rule):
         '''

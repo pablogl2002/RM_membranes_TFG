@@ -34,21 +34,26 @@ class PSystem:
         # genera la estructura dada
         self.gen_struct(base_struct, m_objects, m_rules, p_rules)
 
-        self.while_evolve(10)
+        self.while_evolve()
 
 
-    def while_evolve(self, iter=2**31):
+    def evolve2(self):
+        feasible_rules = self.get_feasible_rules()
+        self.evolve(feasible_rules)
+        print(self.struct_system())
+        print("--------------------------------------------------------------------------------------------")
+
+    def while_evolve(self):
         # muestra por pantalla cada estado después de aplicar una regla
         print(self.struct_system())
         print("--------------------------------------------------------------------------------------------")
         feasible_rules = self.get_feasible_rules()
-        print(feasible_rules)
-        while(iter != 0 and feasible_rules != []):
+        while(feasible_rules != []):
             self.evolve(feasible_rules)
             print(self.struct_system())
             feasible_rules = self.get_feasible_rules()
+            #print(feasible_rules)
             print("--------------------------------------------------------------------------------------------")
-            iter -= 1
         print("============================================================================================")
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
         print(self.membranes[self.outRegion].objects)
@@ -112,9 +117,11 @@ class PSystem:
         for id, memb in self.membranes.items():
             # obtiene las reglas factibles de una membrana
             all_f_rules = list(memb.feasible_rules())
-            rules = random.choice(all_f_rules)
+            #rules = random.choice(all_f_rules)
             # en el caso de que se obtengan reglas las añade en feasible_rules como una tuplas como una tupla con el identificador de la membrana y las reglas 
-            if len(rules) != 0: feasible_rules.append((id, rules))
+            if len(all_f_rules) != 0: feasible_rules.append((id, all_f_rules))
+
+        #print(feasible_rules)
         return feasible_rules
 
     def evolve(self, feasible_rules):
@@ -131,7 +138,8 @@ class PSystem:
         #rule_id = random.choice(list(f_rules))
 
         dissolve = False
-        
+
+        print(f'[membrane {memb_id}] rules applied : {f_rules}')
         for rule_id in f_rules:
 
             if dissolve == True: break
@@ -143,7 +151,7 @@ class PSystem:
             max_possible_i = min([obj for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
 
             # pritea membrana y regla
-            print(f'n_veces: {max_possible_i} memb_id: {memb_id} | rule: {self.membranes[memb_id].rules[rule_id]}')
+            print(f'memb_id: {memb_id} n_veces: {max_possible_i} | rule: {self.membranes[memb_id].rules[rule_id]}')
 
             # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
             for obj in lhs:
@@ -164,7 +172,7 @@ class PSystem:
                             for obj in self.alphabet:
                                 value = self.membranes[memb_id].objects[obj]
                                 self.membranes[parent_id].objects[obj] = self.membranes[parent_id].objects.get(obj, 0) + value
-                        print(memb_id)
+                        
                         # eliminamos el hijo disuelto de la membrana padre
                         self.membranes[parent_id].childs.remove(memb_id)
                         # eliminamos la entrada a la membrana disuelta
@@ -212,54 +220,51 @@ class PSystem:
         return struct
 
 # ~ n es divisible entre k
-# n = 49
-# k = 5
-
-# alphabet = ['a','c','x','d']
-# struct = '122331'
-# m_objects = {1:'',
-#              2:'a'*n+'c'*k+'d',
-#              3:'a'}
-# r_1 = {1:('dcx','a3')}
-# r_2 = {1:('ac','x'),
-#        2:('ax','c'),
-#        3:('d','d.')}
-# m_rules = {1:r_1,
-#            2:r_2,
-#            3:{}}
-# p_rules = {1 : [],
-#            2 : [(1,3),(2,3)],
-#            3 : []}
-# i0 = 3
+def k_divides_n(k,n):
+    alphabet = ['a','c','x','d']
+    struct = '122331'
+    m_objects = {1:'',
+                2:'a'*n+'c'*k+'d',
+                3:'a'}
+    r_1 = {1:('dcx','a3')}
+    r_2 = {1:('ac','x'),
+        2:('ax','c'),
+        3:('d','d.')}
+    m_rules = {1:r_1,
+            2:r_2,
+            3:{}}
+    p_rules = {1 : [],
+            2 : [(1,3),(2,3)],
+            3 : []}
+    i0 = 3
+    return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
 # ~ n^2
+def problem_nsquared():
+    alphabet = ['a','b','x','c','f']
+    struct = '12334421'
+    m_objects = {1:'',
+                2:'',
+                3:'af',
+                4:''}
 
-alphabet = ['a','b','x','c','f']
-struct = '12334421'
-m_objects = {1:'',
-             2:'',
-             3:'af',
-             4:''}
+    r_2 = {1:('x','b'),
+        2:('b','bc4'),
+        3:('ff','f'),
+        4:('f','a.')}
 
-r_2 = {1:('x','b'),
-       2:('b','bc4'),
-       3:('ff','f'),
-       4:('f','a.')}
+    r_3 = {1:('a','ax'),
+        2:('a','x.'),
+        3:('f','ff')}
 
-r_3 = {1:('a','ax'),
-       2:('a','x.'),
-       3:('f','ff')}
+    m_rules = {1:{},
+            2:r_2,
+            3:r_3,
+            4:{}}
 
-m_rules = {1:{},
-           2:r_2,
-           3:r_3,
-           4:{}}
-
-p_rules = {1:[],
-           2:[(3,4)],
-           3:[],
-           4:[]}
-i0 = 4
-
-
-ps = PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
+    p_rules = {1:[],
+            2:[(3,4)],
+            3:[],
+            4:[]}
+    i0 = 4
+    return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
