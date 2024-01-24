@@ -36,7 +36,6 @@ class PSystem:
 
         self.while_evolve()
 
-
     def evolve2(self):
         feasible_rules = self.get_feasible_rules()
         self.evolve(feasible_rules)
@@ -133,6 +132,7 @@ class PSystem:
 
         '''
         # selección de una membrana aleatoria dentro de las posibles con reglas factibles
+        #print(f"longitud feasible rules: {len(feasible_rules)}")
         memb_id, f_rules = random.choice(feasible_rules)
         # selección de una regla aleatoria del conjunto obtenido de la membrana aleatoria
         #rule_id = random.choice(list(f_rules))
@@ -221,6 +221,12 @@ class PSystem:
 
 # ~ n es divisible entre k
 def k_divides_n(k,n):
+    '''
+    Output in membrane 3:
+        - k divides n: 'a'
+        - k not divides n: 'aa'
+    '''
+    
     alphabet = ['a','c','x','d']
     struct = '122331'
     m_objects = {1:'',

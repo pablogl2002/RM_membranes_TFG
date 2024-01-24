@@ -1,3 +1,5 @@
+import collections
+
 class Membrane:
 
     def __init__(self, V, id:int, parent:int=None, objects:str='', rules={}, p_rules={}):
@@ -38,6 +40,7 @@ class Membrane:
 
         # se añaden los objetos iniciales a la membrana
         self.add_objects(objects)
+        print(self.p_rules)
 
     def add_child(self, child:int):
         '''
@@ -83,8 +86,8 @@ class Membrane:
         applicable_rules = [r for r in self.rules if self.is_feasible(r)]
         promising = []
         #print(self.rules)
-        for r in applicable_rules:
-            #print(r)
+        for r in applicable_rules: 
+            # comprueba las prioridades de las reglas
             cond = True
             for r1, r2 in self.p_rules:
                 if r2 == r and self.is_feasible(r1):
@@ -93,19 +96,48 @@ class Membrane:
 
         # comprobar que no haya conflicto entre reglas
             # es decir que si una regla es a -> x y otra es a -> b, que solo se aplique una
-        self.solve_conflicts(promising)
-
-        feasible = []
+        
+        feasible = self.solve_conflicts(promising)
+        #feasible = promising
+        # print(f"aplicables: {applicable_rules}")
+        # print(f"promesas: {promising}")
         #print(f"{self.id} {feasible}")
         # cambiar a feasible cuando solve conflicts devuelva correctamente lo q toca
-        return promising
-    
-    def solve_conflicts(self, promising):
-        for r in promising:
-            r1, r2 = self.rules[r]
-            print(f"l {r1} , r {r2}")
-            pass
+        return feasible
 
+
+    def solve_conflicts(self, promising):
+        # hacer backtracking aqui para sacar las posibles variaciones
+        feasible = []
+        conflictive = collections.defaultdict(set)
+
+        for r1 in promising:
+            cond = True
+            for r2 in promising:
+                # de esta forma no mete ninguna, tiene q meter una en una solucion y la otra en otra
+                key = self.conflict(r1, r2)
+                if r1 != r2 and key != None:
+                    conflictive[key].add(r1)
+                    conflictive[key].add(r2)
+                    cond = False
+                    break
+            # if cond: feasible.append(r1)
+            feasible.append(r1)
+        print(f"conflictivas: {conflictive}")
+        #print(feasible)
+        return feasible
+
+    def conflict(self, rule1, rule2):
+        lhs1, _ = self.rules[rule1]
+        lhs2, _ = self.rules[rule2]
+        
+        lhs_min_len, lhs_max_len = (lhs1, lhs2) if len(lhs1) <= len(lhs2) else (lhs2, lhs1)
+
+        for a in lhs_min_len:
+            if a in lhs_max_len:
+                return a
+        return None
+    
     """ 
     def feasible_rules(self):
         '''
