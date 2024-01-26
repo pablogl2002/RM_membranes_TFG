@@ -1,4 +1,5 @@
 import collections
+import random
 
 class Membrane:
 
@@ -40,7 +41,6 @@ class Membrane:
 
         # se añaden los objetos iniciales a la membrana
         self.add_objects(objects)
-        print(self.p_rules)
 
     def add_child(self, child:int):
         '''
@@ -83,10 +83,14 @@ class Membrane:
             print(f'Objects given not in alphabet({self.alphabet})')
 
     def feasible_rules(self):
-        applicable_rules = [r for r in self.rules if self.is_feasible(r)]
+        '''
+        Return a combination of rules that can be applied all at once in the membrane
+
+        return: feasible
+        '''
+        applicable_rules = [r for r in self.rules if self.is_feasible(r)]   # recoge todas las reglas que se pueden aplicar
         promising = []
-        #print(self.rules)
-        for r in applicable_rules: 
+        for r in applicable_rules:
             # comprueba las prioridades de las reglas
             cond = True
             for r1, r2 in self.p_rules:
@@ -94,40 +98,67 @@ class Membrane:
                     cond = False
             if cond: promising.append(r)
 
-        # comprobar que no haya conflicto entre reglas
+        # comprueba que no haya conflicto entre reglas
             # es decir que si una regla es a -> x y otra es a -> b, que solo se aplique una
-        
         feasible = self.solve_conflicts(promising)
-        #feasible = promising
-        # print(f"aplicables: {applicable_rules}")
-        # print(f"promesas: {promising}")
-        #print(f"{self.id} {feasible}")
-        # cambiar a feasible cuando solve conflicts devuelva correctamente lo q toca
+
         return feasible
 
 
     def solve_conflicts(self, promising):
-        # hacer backtracking aqui para sacar las posibles variaciones
-        feasible = []
+        '''
+        Return from a combination of rules without priorities  and return all combinations that don't have conflicts between them
+
+        :param promising: combination of a possible rules
+        :type promising: list
+
+        :return all feasible combinations of rules
+
+        '''
+        feasible = promising
         conflictive = collections.defaultdict(set)
 
         for r1 in promising:
-            cond = True
             for r2 in promising:
-                # de esta forma no mete ninguna, tiene q meter una en una solucion y la otra en otra
                 key = self.conflict(r1, r2)
                 if r1 != r2 and key != None:
                     conflictive[key].add(r1)
                     conflictive[key].add(r2)
-                    cond = False
-                    break
-            # if cond: feasible.append(r1)
-            feasible.append(r1)
-        print(f"conflictivas: {conflictive}")
-        #print(feasible)
-        return feasible
+                    if r1 in feasible: feasible.remove(r1)
+                    if r2 in feasible: feasible.remove(r2)
+                    break     
+
+        def is_promising(sol, rule):
+            for r in sol:
+                if self.conflict(r, rule): return False
+            return True
+
+        def backtracking(sol):
+            # if es completo
+            if len(sol) == len(conflictive.keys()):
+                yield feasible + sol
+            else:
+                # ramificar
+                for _, rules in conflictive.items():
+                    for rule in rules:
+                        # if prometedor
+                        if is_promising(sol, rule):
+                            yield from backtracking(sol+[rule])
+
+        yield from backtracking([])
+
 
     def conflict(self, rule1, rule2):
+        '''
+        Checks if two rules have conflicts like 'a'-> 'b' and 'ab' -> 'b', both need an 'a' to be apply
+        
+        :param rule1: first rule to compare
+        :type rule1: int -> rule id 
+        :param rule2: second rule to compare
+        :type rule1: int -> rule id 
+
+        :return first character where is the conflict
+        '''
         lhs1, _ = self.rules[rule1]
         lhs2, _ = self.rules[rule2]
         
@@ -137,63 +168,6 @@ class Membrane:
             if a in lhs_max_len:
                 return a
         return None
-    
-    """ 
-    def feasible_rules(self):
-        '''
-        Get the feasible rules from the membrane.
-
-        :return feasible_r
-
-        '''
-        aux = {}
-
-        non_feasible = set()
-        for i1, i2 in self.p_rules:
-            if self.is_feasible(i1):
-                non_feasible.add(i2)
-
-        print(non_feasible)
-        
-        # corregir puede estar una regla (r1, r3) y luego (r2, r1)
-        def check_prio(n_feasible, rule):
-            for i1, i2 in self.p_rules:
-                if i1 == rule: return True
-                elif i2 == rule: 
-                    if i1 in n_feasible and i2 not in n_feasible: return True
-                    else: return False
-            return True
-
-        def promising(feasible, n_feasible, rule):
-            if (rule not in feasible) and (rule not in n_feasible) and self.is_feasible(rule) and check_prio(n_feasible, rule):
-                for l in self.alphabet:
-                    if aux.get(l,0) + self.rules[rule][0].count(l) <= self.objects[l]:
-                        aux[l] = aux.get(l,0) + self.rules[rule][0].count(l)
-                    else: return False
-                return True
-            else: return False
-
-        def backtracking(feasible, n_feasible, index):
-            if index > len(self.rules.keys()): # if completo
-                # if factible ?
-                yield feasible.copy()
-            else:
-                # if index not in feasible_r and index not in non_feasible and self.is_feasible(index):
-                if promising(feasible, n_feasible, index):
-                    feasible.add(index)
-                    yield from backtracking(feasible, n_feasible, index + 1)
-                    for l in self.alphabet:
-                        aux[l] = aux.get(l,0) - self.rules[index][0].count(l)
-                    feasible.pop()
-                else:
-                    n_feasible.add(index)
-                yield from backtracking(feasible, n_feasible, index + 1)
-
-        # for rule in self.rules.keys():
-        #     if rule not in feasible_r and rule not in non_feasible and self.is_feasible(rule):
-        #         feasible_r.add(rule)
-        # return feasible_r
-        yield from backtracking(set(), non_feasible, 1) """
     
     def is_feasible(self, rule):
         '''

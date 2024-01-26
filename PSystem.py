@@ -34,15 +34,31 @@ class PSystem:
         # genera la estructura dada
         self.gen_struct(base_struct, m_objects, m_rules, p_rules)
 
-        self.while_evolve()
+        #self.while_evolve()
 
-    def evolve2(self):
-        feasible_rules = self.get_feasible_rules()
-        self.evolve(feasible_rules)
-        print(self.struct_system())
-        print("--------------------------------------------------------------------------------------------")
+    def steps(self, n=1):
+        '''
+        Evolve the system n steps or until finish
+
+        :param n: number of steps to evolve
+        :type n: int
+
+        '''
+        cont = n
+        while cont > 0:
+            feasible_rules = self.get_feasible_rules()
+            self.evolve(feasible_rules)
+            print(self.struct_system())
+            print("\n--------------------------------------------------------------------------------------------\n")
+            cont -= 1
+        print("============================================================================================\n")
+        # objectos tras aplicar todas las iteraciones posibles en la región de salida
+        print(self.membranes[self.outRegion].objects)
 
     def while_evolve(self):
+        '''
+        Evolve the system until finish
+        '''
         # muestra por pantalla cada estado después de aplicar una regla
         print(self.struct_system())
         print("--------------------------------------------------------------------------------------------")
@@ -51,12 +67,15 @@ class PSystem:
             self.evolve(feasible_rules)
             print(self.struct_system())
             feasible_rules = self.get_feasible_rules()
-            #print(feasible_rules)
-            print("--------------------------------------------------------------------------------------------")
-        print("============================================================================================")
+            print("\n--------------------------------------------------------------------------------------------\n")
+        print("============================================================================================\n")
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
         print(self.membranes[self.outRegion].objects)
 
+    def i0_empty(self):
+        if sum(self.membranes[self.outRegion].objects.values()) <= 0:
+            return True
+        else: return False
 
     def gen_struct(self, struct, m_objects, m_rules, p_rules):
         '''
@@ -116,9 +135,9 @@ class PSystem:
         for id, memb in self.membranes.items():
             # obtiene las reglas factibles de una membrana
             all_f_rules = list(memb.feasible_rules())
-            #rules = random.choice(all_f_rules)
+            rules = random.choice(all_f_rules)
             # en el caso de que se obtengan reglas las añade en feasible_rules como una tuplas como una tupla con el identificador de la membrana y las reglas 
-            if len(all_f_rules) != 0: feasible_rules.append((id, all_f_rules))
+            if len(rules) != 0: feasible_rules.append((id, rules))
 
         #print(feasible_rules)
         return feasible_rules
@@ -132,26 +151,24 @@ class PSystem:
 
         '''
         # selección de una membrana aleatoria dentro de las posibles con reglas factibles
-        #print(f"longitud feasible rules: {len(feasible_rules)}")
         memb_id, f_rules = random.choice(feasible_rules)
-        # selección de una regla aleatoria del conjunto obtenido de la membrana aleatoria
-        #rule_id = random.choice(list(f_rules))
 
         dissolve = False
 
         print(f'[membrane {memb_id}] rules applied : {f_rules}')
         for rule_id in f_rules:
-
+            
+            # si una regla anterior ha disuelto la membrana no aplica más reglas en esa membrana
             if dissolve == True: break
             
             # divide en parte izquierda y derecha la regla
             lhs, rhs = self.membranes[memb_id].rules[rule_id]
 
-            # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla)
-            max_possible_i = min([obj for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
+            # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla dividido el numero de ocurrencias en la parte izquierda de la regla)
+            max_possible_i = min([int(obj/lhs.count(s)) for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
 
-            # pritea membrana y regla
-            print(f'memb_id: {memb_id} n_veces: {max_possible_i} | rule: {self.membranes[memb_id].rules[rule_id]}')
+            # printea membrana y regla
+            print(f'memb_id: {memb_id} | n_veces: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id]}')
 
             # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
             for obj in lhs:
@@ -159,8 +176,8 @@ class PSystem:
             
             # de la membrana elegida sacamos el id de la membrana padre 
             parent_id = self.membranes[memb_id].parent
-            # recorremos la parte derecha de la regla
-            
+
+            # recorremos la parte derecha de la regla           
             for i, _ in enumerate(rhs):
                 # si no es un digito
                 if not(rhs[i].isdigit()):
@@ -175,6 +192,8 @@ class PSystem:
                         
                         # eliminamos el hijo disuelto de la membrana padre
                         self.membranes[parent_id].childs.remove(memb_id)
+                        # como se ha disuelto la membrana, las membranas hijas de la disuelta pasan a ser hijas de la membrana padre
+                        self.membranes[parent_id].childs = self.membranes[parent_id].childs | self.membranes[memb_id].childs
                         # eliminamos la entrada a la membrana disuelta
                         self.membranes.pop(memb_id)
 
@@ -193,6 +212,7 @@ class PSystem:
                             if parent_id != None:
                                 # saca a la membrana padre el objeto
                                 self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + max_possible_i
+
                     # caso de adicion a la propia membrana
                     else:
                         # añade objeto a la membrana
@@ -211,7 +231,7 @@ class PSystem:
         '''
         objects = ''
         for obj, n in self.membranes[id].objects.items():
-            objects += obj*n 
+            objects += obj*n
         struct = f"[{id} '{objects}' "
         if self.membranes[id].childs != {}:
             for id_child in self.membranes[id].childs:
@@ -226,7 +246,7 @@ def k_divides_n(k,n):
         - k divides n: 'a'
         - k not divides n: 'aa'
     '''
-    
+
     alphabet = ['a','c','x','d']
     struct = '122331'
     m_objects = {1:'',
@@ -247,6 +267,10 @@ def k_divides_n(k,n):
 
 # ~ n^2
 def problem_nsquared():
+    '''
+    Output in membrane 4:
+        - m4.count(c) == m1.count(b)²
+    '''
     alphabet = ['a','b','x','c','f']
     struct = '12334421'
     m_objects = {1:'',
