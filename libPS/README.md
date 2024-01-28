@@ -146,9 +146,12 @@ memb_id: 2 | n_veces: 1 -> rule: ('f', 'a.')
 ```
 ### k divides n
 
-A **P** system that checks if a number _n_ is divisible by another number _k_. In this case _n_ = 15 and _k_ = 3.
+A **P** system that checks if a number _n_ is divisible by another number _k_. 
+
 
 ![A **P** system deciding whether k divides n](assets/PSystem_k_divides_n.png)
+
+In this case _k_ = 3 divides _n_ = 15 .
 
 ```python
 from libPS.PSystem import *
@@ -223,7 +226,7 @@ memb_id: 2 | n_veces: 1 -> rule: ('d', 'd.')
 {'c': 0, 'd': 0, 'a': 1, 'x': 0}
 ```
 
-Same example but with with k not divides n, like n = 15 and k = 4.
+In this other case _k_ = 4 not divides _n_ = 15.
 
 ```terminal
 [1 '' [2 'ccccdaaaaaaaaaaaaaaa' ]2[3 'a' ]3]1
