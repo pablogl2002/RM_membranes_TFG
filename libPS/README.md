@@ -277,7 +277,9 @@ memb_id: 1 | n_times: 1 -> rule: ('dcx', 'a3')
 
 ```
 
-## Interpreting the parameters
+## Notation
+
+### Parameters
 
 Using as example a **P** system deciding whether k divides n, which was used as example of use before:
 
@@ -372,7 +374,7 @@ Using as example a **P** system deciding whether k divides n, which was used as 
     </tbody>
 </table>
 
-### Rules notation
+### Rules
 
 <table>
     <thead>
