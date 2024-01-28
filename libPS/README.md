@@ -303,7 +303,7 @@ Using as example a **P** system deciding whether k divides n, which was used as 
             <td align="center">PSystem</td>
             <td align="center">struct</td>
             <td align="center">'122331'</td>
-            <td align="center">[<sub>1</sub>[<sub>2</sub>]<sub>2</sub>[<sub>3</sub>]<sub>3</sub>]<sub>1</sub></td>
+            <td align="center">[<sub>1</sub> [<sub>2</sub> ]<sub>2</sub> [<sub>3</sub> ]<sub>3</sub> ]<sub>1</sub></td>
         </tr>
         <tr>
             <td align="center">memb1</td>
@@ -400,10 +400,20 @@ Using as example a **P** system deciding whether k divides n, which was used as 
             <td align="center">Using '.' to dissolve<br>( 'b', '.' )</td>
             <td align="center">Using &delta; to dissolve <br> b &rarr; &delta;</td>
         </tr>
+        <tr><th></th><th></th><th></th></tr>
+        <tr><td colspan=3 align="center"><b>Priority</b></td></tr>
+        <tr>
+            <th>Description</th>
+            <th>In code</th>
+            <th>In traditional notation</th>
+        </tr>
+        <tr>
+            <td>rule1 more priority than rule2</td>
+            <td align="center">( 1, 2 )</td>
+            <td align="center">r1 > r2</td>
+        </tr>
     </tbody>
 </table>
-
-
 
 ## Authors
 
