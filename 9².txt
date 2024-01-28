@@ -1,0 +1,145 @@
+>>> from PSystem import *
+>>> ps = problem_nsquared()
+>>> ps.while_evolve()
+
+[1 '' [2 '' [3 'af' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_veces: 1 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'axff' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_veces: 2 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'axxffff' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_veces: 4 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'axxxffffffff' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_veces: 8 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'axxxxffffffffffffffff' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_veces: 16 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'axxxxxffffffffffffffffffffffffffffffff' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_veces: 32 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'axxxxxxffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_veces: 64 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'axxxxxxxffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_veces: 128 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'axxxxxxxxffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 2]
+memb_id: 3 | n_veces: 256 -> rule: ('f', 'ff')
+memb_id: 3 | n_veces: 1 -> rule: ('a', 'x.')
+[1 '' [2 'xxxxxxxxxffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' [4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [1, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('x', 'b')
+memb_id: 2 | n_veces: 256 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' [4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 128 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' [4 'ccccccccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 64 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' [4 'cccccccccccccccccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 32 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbffffffffffffffffffffffffffffffff' [4 'ccccccccccccccccccccccccccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 16 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbffffffffffffffff' [4 'cccccccccccccccccccccccccccccccccccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 8 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbffffffff' [4 'ccccccccccccccccccccccccccccccccccccccccccccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 4 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbffff' [4 'cccccccccccccccccccccccccccccccccccccccccccccccccccccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 2 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbff' [4 'ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 1 -> rule: ('ff', 'f')
+[1 '' [2 'bbbbbbbbbf' [4 'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 4]
+memb_id: 2 | n_veces: 9 -> rule: ('b', 'bc4')
+memb_id: 2 | n_veces: 1 -> rule: ('f', 'a.')
+[1 'abbbbbbbbb' [4 'ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc' ]4]1
+
+--------------------------------------------------------------------------------------------
+
+============================================================================================
+
+{'a': 0, 'x': 0, 'b': 0, 'c': 81, 'f': 0}
+

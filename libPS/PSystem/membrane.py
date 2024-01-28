@@ -1,31 +1,19 @@
 import collections
-import random
 
 class Membrane:
 
     def __init__(self, V, id:int, parent:int=None, objects:str='', rules={}, p_rules={}):
-        '''
-        Membrane class constructor.
+        """Membrane class constructor.
 
-        :param V: Membrane's alphabet (same as system's)
-        :type V: list
+        Args:
+            V (list): Membrane's alphabet (same as system's)
+            id (int): Membrane's id
+            parent (int, optional): Parent Membrane's id. Defaults to None.
+            objects (str, optional): Membrane's objects. Defaults to ''.
+            rules (dict, optional): Membrane's rules | key: rule_id, value:list = tuple (lhs, rhs). Defaults to {}.
+            p_rules (dict, optional): Rules priority in membrane. Defaults to {}.
+        """
 
-        :param id: Membrane's id
-        :type id: int
-
-        :param parent: Parent Membrane's id
-        :type parent: int
-
-        :param objects: Membrane's objects
-        :type objects: str
-
-        :param rules: Membrane's rules
-        :type rules: dict -> key: rule_id, value:list = tuple (lhs, rhs)
-
-        :param p_rules: rules priority in membrane
-        :type p_rules: list
-
-        '''
         self.alphabet = V               # membrane's alphabet
         self.id = id                    # membrane's id
         self.parent = parent            # parent's id
@@ -43,35 +31,32 @@ class Membrane:
         self.add_objects(objects)
 
     def add_child(self, child:int):
-        '''
-        Add child to the membrane.
+        """Add child to the membrane.
 
-        :param child: child's id
-        :type child: int
+        Args:
+            child (int): child's id
+        """
 
-        '''
         self.childs.add(child)
         self.rhs_alphabet.add(str(child))
     
     def add_plasmids(self, plasmids:list):
-        '''
-        Add plasmid to the membrane.
+        """Add plasmid to the membrane.
 
-        :param plasmids: list of plasmids' id 
-        :type plasmids: list
+        Args:
+            plasmids (list): list of plasmids' id 
+        """
 
-        '''
         for plasmid in plasmids:
             self.rules.add(plasmid)
     
     def add_objects(self, objects:str):
-        '''
-        Add objects to the membranes.
+        """Add objects to the membranes.
 
-        :param objects: objects to add in the membrane
-        :type objects: str
+        Args:
+            objects (str): objects to add in the membrane
+        """
 
-        '''
         suma = 0
         prev_objs = self.objects
         for obj in self.alphabet:
@@ -82,19 +67,20 @@ class Membrane:
             self.objects = prev_objs
             print(f'Objects given not in alphabet({self.alphabet})')
 
-    def feasible_rules(self):
-        '''
-        Return a combination of rules that can be applied all at once in the membrane
+    def get_feasible_rules(self):
+        """Return a combination of rules that can be applied all at once in the membrane
 
-        return: feasible
-        '''
-        applicable_rules = [r for r in self.rules if self.is_feasible(r)]   # recoge todas las reglas que se pueden aplicar
+        Returns:
+            list: list of list (due to yields) with feasible rules combinations
+        """
+
+        applicable_rules = [r for r in self.rules if self.is_applicable(r)]   # recoge todas las reglas que se pueden aplicar
         promising = []
         for r in applicable_rules:
             # comprueba las prioridades de las reglas
             cond = True
             for r1, r2 in self.p_rules:
-                if r2 == r and self.is_feasible(r1):
+                if r2 == r and self.is_applicable(r1):
                     cond = False
             if cond: promising.append(r)
 
@@ -106,15 +92,15 @@ class Membrane:
 
 
     def solve_conflicts(self, promising):
-        '''
-        Return from a combination of rules without priorities  and return all combinations that don't have conflicts between them
+        """Solve the conflicts with the rules in a rules' list
 
-        :param promising: combination of a possible rules
-        :type promising: list
+        Args:
+            promising (list): combination of a possible rules
 
-        :return all feasible combinations of rules
+        Yields:
+            list: feasible combination of rules
+        """
 
-        '''
         feasible = promising
         conflictive = collections.defaultdict(set)
 
@@ -149,16 +135,16 @@ class Membrane:
 
 
     def conflict(self, rule1, rule2):
-        '''
-        Checks if two rules have conflicts like 'a'-> 'b' and 'ab' -> 'b', both need an 'a' to be apply
-        
-        :param rule1: first rule to compare
-        :type rule1: int -> rule id 
-        :param rule2: second rule to compare
-        :type rule1: int -> rule id 
+        """Checks if two rules have conflicts like 'a'-> 'b' and 'ab' -> 'b', both need an 'a' to be apply
 
-        :return first character where is the conflict
-        '''
+        Args:
+            rule1 (int): first rule to compare
+            rule2 (int): second rule to compare
+
+        Returns:
+            char: first character where is the conflict
+        """
+
         lhs1, _ = self.rules[rule1]
         lhs2, _ = self.rules[rule2]
         
@@ -169,13 +155,16 @@ class Membrane:
                 return a
         return None
     
-    def is_feasible(self, rule):
-        '''
-        Get if a rule is feasible.
+    def is_applicable(self, rule):
+        """Checks if a rule ca be applied
 
-        :return boolean
+        Args:
+            rule (int): rule to check
 
-        '''
+        Returns:
+            boolean: if the can be applied to the system or not
+        """
+
         for obj in self.alphabet:
             if self.objects[obj] < self.rules[rule][0].count(obj):
                 return False

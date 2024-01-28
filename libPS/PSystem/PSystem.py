@@ -1,30 +1,19 @@
 import random
-from membrane import *
+from .membrane import *
 
 class PSystem:
 
     def __init__(self, V:list=[], base_struct="11", m_objects={}, m_rules={}, p_rules={}, i0=1):
-        '''
-        PSystem class constructor.
+        """PSystem class constructor.
 
-        :param V: System's alphabet
-        :type V: list
-
-        :param base_struct: Initial system's structure 
-        :type base_struct: str
-
-        :param m_objects: Membrane's objects
-        :type m_objects: dict -> key:int = memb_id, value:str = memb_objects
-
-        :param m_rules: Membrane's rules
-        :type m_rules:  dict -> key:int = memb_id, value:dict = memb_rules
-
-        :param p_rules: rules priority in each membrane
-        :type p_rules:  dict -> key:int = memb_id, value:list = memb_priority
-
-        :param i0: output membrane
-        :type i0: int
-        '''
+        Args:
+            V (list, optional): System's alphabet. Defaults to [].
+            base_struct (str, optional): Initial system's structure. Defaults to "11".
+            m_objects (dict, optional): Membrane's objects | key:int = memb_id, value:str = memb_objects. Defaults to {}.
+            m_rules (dict, optional): Membrane's rules | key:int = memb_id, value:dict = memb_rules. Defaults to {}.
+            p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {}.
+            i0 (int, optional): Output membrane. Defaults to 1.
+        """
 
         self.alphabet = set(V)
         self.membranes = {}
@@ -33,67 +22,19 @@ class PSystem:
 
         # genera la estructura dada
         self.gen_struct(base_struct, m_objects, m_rules, p_rules)
-
         #self.while_evolve()
 
-    def steps(self, n=1):
-        '''
-        Evolve the system n steps or until finish
-
-        :param n: number of steps to evolve
-        :type n: int
-
-        '''
-        cont = n
-        while cont > 0:
-            feasible_rules = self.get_feasible_rules()
-            self.evolve(feasible_rules)
-            print(self.struct_system())
-            print("\n--------------------------------------------------------------------------------------------\n")
-            cont -= 1
-        print("============================================================================================\n")
-        # objectos tras aplicar todas las iteraciones posibles en la región de salida
-        print(self.membranes[self.outRegion].objects)
-
-    def while_evolve(self):
-        '''
-        Evolve the system until finish
-        '''
-        # muestra por pantalla cada estado después de aplicar una regla
-        print(self.struct_system())
-        print("--------------------------------------------------------------------------------------------")
-        feasible_rules = self.get_feasible_rules()
-        while(feasible_rules != []):
-            self.evolve(feasible_rules)
-            print(self.struct_system())
-            feasible_rules = self.get_feasible_rules()
-            print("\n--------------------------------------------------------------------------------------------\n")
-        print("============================================================================================\n")
-        # objectos tras aplicar todas las iteraciones posibles en la región de salida
-        print(self.membranes[self.outRegion].objects)
-
-    def i0_empty(self):
-        if sum(self.membranes[self.outRegion].objects.values()) <= 0:
-            return True
-        else: return False
 
     def gen_struct(self, struct, m_objects, m_rules, p_rules):
-        '''
-        Creates system structure.
+        """Creates system structure.
 
-        :param struct: initial structure
-        :type struct: str
+        Args:
+            struct (str): Initial structure
+            m_objects (dict): Membrane's objects | key:int = memb_id, value:str = memb_objects
+            m_rules (dict): Membrane's rules | key:int = memb_id, value:dict = memb_rules
+            p_rules (dict): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority
+        """
 
-        :param m_objects: Membrane's objects.
-        :type m_objects: dict -> key:int = memb_id, value:str = memb_objects         
-
-        :param m_rules: Membrane's rules.
-        :type m_rules:  dict -> key:int = memb_id, value:dict = memb_rules
-
-        :param p_rules: rules priority in each membrane.
-        :type p_rules:  dict -> key:int = memb_id, value:list = memb_priority
-
-        '''
         open = struct[0]    # variable que indica en qué membrana estamos generando (permite comprobar a la vez que se va generando que la estructura inicial sea correcta)
         id = int(open)      # identificador de la membrana abierta
         # creamos entrada para la primera membrana con sus parametros correspondientes
@@ -123,33 +64,50 @@ class PSystem:
             print('Incorrect membrane structure')
 
 
-    def get_feasible_rules(self):
-        '''
-        Get feasible rules from all membranes in the system.
+    def steps(self, n=1):
+        """Evolve the system n steps or until finish
 
-        :return feasible_rules 
+        Args:
+            n (int, optional): Number of steps to evolve. Defaults to 1.
+        """
 
-        '''
-        feasible_rules = []
-        # recorre todas las membranas y va añadiendo en feasible_rules las reglas factibles
-        for id, memb in self.membranes.items():
-            # obtiene las reglas factibles de una membrana
-            all_f_rules = list(memb.feasible_rules())
-            rules = random.choice(all_f_rules)
-            # en el caso de que se obtengan reglas las añade en feasible_rules como una tuplas como una tupla con el identificador de la membrana y las reglas 
-            if len(rules) != 0: feasible_rules.append((id, rules))
+        cont = n
+        while cont > 0:
+            feasible_rules = self.get_feasible_rules()
+            self.evolve(feasible_rules)
+            self.print_system()
+            print("\n--------------------------------------------------------------------------------------------\n")
+            cont -= 1
+        print("============================================================================================\n")
+        # objectos tras aplicar todas las iteraciones posibles en la región de salida
+        print(self.membranes[self.outRegion].objects)
 
-        #print(feasible_rules)
-        return feasible_rules
+
+    def while_evolve(self):
+        """Evolve the system until finish
+        """
+        # muestra por pantalla cada estado después de aplicar una regla
+        print()
+        self.print_system()
+        print("\n--------------------------------------------------------------------------------------------\n")
+        feasible_rules = self.get_feasible_rules()
+        while(feasible_rules != []):
+            self.evolve(feasible_rules)
+            self.print_system()
+            feasible_rules = self.get_feasible_rules()
+            print("\n--------------------------------------------------------------------------------------------\n")
+        print("============================================================================================\n")
+        # objectos tras aplicar todas las iteraciones posibles en la región de salida
+        print(self.membranes[self.outRegion].objects)
+
 
     def evolve(self, feasible_rules):
-        '''
-        Makes an iteration on the system choosing a random rule from given rules (feasible_rules).
+        """Makes an iteration on the system choosing a random membrane to apply its rules.
 
-        :param feasible_rules: system's feasible rules
-        :type feasible_rules: tuple (memb_id, rules_set) -> memb_id:int | rules_set:list
+        Args:
+            feasible_rules (tuple): System's feasible rules | (memb_id:int, rules_set:list)
+        """
 
-        '''
         # selección de una membrana aleatoria dentro de las posibles con reglas factibles
         memb_id, f_rules = random.choice(feasible_rules)
 
@@ -218,17 +176,43 @@ class PSystem:
                         # añade objeto a la membrana
                         self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + max_possible_i
 
+
+    def get_feasible_rules(self):
+        """Get feasible rules from all membranes in the system.
+
+        Returns:
+            list: List of membranes and their feasible rules
+        """
+
+        feasible_rules = []
+        # recorre todas las membranas y va añadiendo en feasible_rules las reglas factibles
+        for id, memb in self.membranes.items():
+            # obtiene las reglas factibles de una membrana
+            all_f_rules = list(memb.get_feasible_rules())
+            rules = random.choice(all_f_rules)
+            # en el caso de que se obtengan reglas las añade en feasible_rules como una tuplas como una tupla con el identificador de la membrana y las reglas 
+            if len(rules) != 0: feasible_rules.append((id, rules))
+
+        return feasible_rules
+
+
+    def print_system(self):
+        """Print system's structure
+        """
+        print(self.struct_system())
+
+
     def struct_system(self, struct='', id=1):
-        '''
-        Recursive function to print system's structure.
+        """Recursive function to print system's structure.
 
-        :param struct: acumulative structure to do it in a recursive way 
-        :type struct: str
+        Args:
+            struct (str, optional): Acumulative structure to do it in a recursive way. Defaults to ''.
+            id (int, optional): Membrane's id . Defaults to 1.
 
-        :param id: membrane's id 
-        :type id: int
-
-        '''
+        Returns:
+            str: Generate a more visual form of the system
+        """
+        
         objects = ''
         for obj, n in self.membranes[id].objects.items():
             objects += obj*n
@@ -238,63 +222,3 @@ class PSystem:
                 struct += self.struct_system(struct, id_child)
         struct += f']{id}'
         return struct
-
-# ~ n es divisible entre k
-def k_divides_n(k,n):
-    '''
-    Output in membrane 3:
-        - k divides n: 'a'
-        - k not divides n: 'aa'
-    '''
-
-    alphabet = ['a','c','x','d']
-    struct = '122331'
-    m_objects = {1:'',
-                2:'a'*n+'c'*k+'d',
-                3:'a'}
-    r_1 = {1:('dcx','a3')}
-    r_2 = {1:('ac','x'),
-        2:('ax','c'),
-        3:('d','d.')}
-    m_rules = {1:r_1,
-            2:r_2,
-            3:{}}
-    p_rules = {1 : [],
-            2 : [(1,3),(2,3)],
-            3 : []}
-    i0 = 3
-    return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
-
-# ~ n^2
-def problem_nsquared():
-    '''
-    Output in membrane 4:
-        - m4.count(c) == m1.count(b)²
-    '''
-    alphabet = ['a','b','x','c','f']
-    struct = '12334421'
-    m_objects = {1:'',
-                2:'',
-                3:'af',
-                4:''}
-
-    r_2 = {1:('x','b'),
-        2:('b','bc4'),
-        3:('ff','f'),
-        4:('f','a.')}
-
-    r_3 = {1:('a','ax'),
-        2:('a','x.'),
-        3:('f','ff')}
-
-    m_rules = {1:{},
-            2:r_2,
-            3:r_3,
-            4:{}}
-
-    p_rules = {1:[],
-            2:[(3,4)],
-            3:[],
-            4:[]}
-    i0 = 4
-    return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
