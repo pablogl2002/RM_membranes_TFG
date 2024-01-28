@@ -75,7 +75,7 @@ class PSystem:
         cont = n
         while cont > 0:
             feasible_rules = self.get_feasible_rules()
-            self.evolve(feasible_rules)
+            self.evolve(feasible_rules, verbose)
             if verbose: self.print_system()
             print("\n--------------------------------------------------------------------------------------------\n")
             cont -= 1
@@ -96,7 +96,7 @@ class PSystem:
         print("\n--------------------------------------------------------------------------------------------\n")
         feasible_rules = self.get_feasible_rules()
         while(feasible_rules != []):
-            self.evolve(feasible_rules)
+            self.evolve(feasible_rules, verbose)
             if verbose: self.print_system()
             feasible_rules = self.get_feasible_rules()
             print("\n--------------------------------------------------------------------------------------------\n")
@@ -105,7 +105,7 @@ class PSystem:
         print(self.membranes[self.outRegion].objects)
 
 
-    def evolve(self, feasible_rules):
+    def evolve(self, feasible_rules, verbose=False):
         """Makes an iteration on the system choosing a random membrane to apply its rules.
 
         Args:
@@ -117,7 +117,7 @@ class PSystem:
 
         dissolve = False
 
-        print(f'[membrane {memb_id}] rules applied : {f_rules}')
+        if verbose: print(f'[membrane {memb_id}] rules applied : {f_rules}')
         for rule_id in f_rules:
             
             # si una regla anterior ha disuelto la membrana no aplica más reglas en esa membrana
@@ -130,7 +130,7 @@ class PSystem:
             max_possible_i = min([int(obj/lhs.count(s)) for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
 
             # printea membrana y regla
-            print(f'memb_id: {memb_id} | n_veces: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id]}')
+            if verbose: print(f'memb_id: {memb_id} | n_times: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id]}')
 
             # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
             for obj in lhs:
