@@ -34,6 +34,28 @@ def k_divides_n(k,n):
     i0 = 3
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
+
+def k_divides_n2(k,n):
+    alphabet = ['a','c','x','d','n','s']
+    struct = '122331'
+    m_objects = {1:'',
+                2:'a'*n+'c'*k+'d',
+                3:''}
+    r_1 = {1:('dcx','n3'),
+           2:('d', 's3')}
+    r_2 = {1:('ac','x'),
+        2:('ax','c'),
+        3:('d','d.')}
+    m_rules = {1:r_1,
+            2:r_2,
+            3:{}}
+    p_rules = {1 : [(1,2)],
+            2 : [(1,3),(2,3)],
+            3 : []}
+    i0 = 3
+    return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
+
+
 # ~ n^2
 def problem_nsquared():
     """PSystem that generate a number and calulate the square of it
@@ -71,8 +93,3 @@ def problem_nsquared():
             4:[]}
     i0 = 4
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
-
-ps = k_divides_n(15,3)
-#ps = k_divides_n(15,4)
-#ps = problem_nsquared()
-ps.while_evolve(verbose=True)

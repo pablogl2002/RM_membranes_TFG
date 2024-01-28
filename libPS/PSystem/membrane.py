@@ -30,6 +30,7 @@ class Membrane:
         # se añaden los objetos iniciales a la membrana
         self.add_objects(objects)
 
+
     def add_child(self, child:int):
         """Add child to the membrane.
 
@@ -40,6 +41,7 @@ class Membrane:
         self.childs.add(child)
         self.rhs_alphabet.add(str(child))
     
+
     def add_plasmids(self, plasmids:list):
         """Add plasmid to the membrane.
 
@@ -50,6 +52,7 @@ class Membrane:
         for plasmid in plasmids:
             self.rules.add(plasmid)
     
+
     def add_objects(self, objects:str):
         """Add objects to the membranes.
 
@@ -66,6 +69,7 @@ class Membrane:
         if suma != len(objects):
             self.objects = prev_objs
             print(f'Objects given not in alphabet({self.alphabet})')
+
 
     def get_feasible_rules(self):
         """Return a combination of rules that can be applied all at once in the membrane
@@ -154,6 +158,7 @@ class Membrane:
             if a in lhs_max_len:
                 return a
         return None
+    
     
     def _is_applicable(self, rule):
         """Checks if a rule ca be applied

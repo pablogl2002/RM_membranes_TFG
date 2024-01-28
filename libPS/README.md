@@ -1,5 +1,5 @@
 
-# P_System python library
+# PSystem python library
 
 Library that allows you to create P Systems and evolve them.
 ## PSystem class and its functions
@@ -61,7 +61,11 @@ Get a combination of rules that can be applied all at once in the membrane
 ## Usage/Examples
 
 ### n squared
-P system that after n steps calculates n²
+
+A **P** System generating _n²_, _n_ >= 1
+
+![A **P** System generating n², n >= 1](assets/PSystem_n_squared.png)
+
 ```python
 from libPS.PSystem import *
 
@@ -141,7 +145,11 @@ memb_id: 2 | n_veces: 1 -> rule: ('f', 'a.')
 {'a': 0, 'b': 0, 'f': 0, 'c': 4, 'x': 0}
 ```
 ### k divides n
-P system that checks if a number 'n' is divisible by another number 'k'. In this case n = 15 and k = 3.
+
+A **P** system that checks if a number _n_ is divisible by another number _k_. In this case _n_ = 15 and _k_ = 3.
+
+![A **P** system deciding whether k divides n](assets/PSystem_k_divides_n.png)
+
 ```python
 from libPS.PSystem import *
 
@@ -263,7 +271,6 @@ memb_id: 1 | n_veces: 1 -> rule: ('dcx', 'a3')
 {'c': 0, 'd': 0, 'x': 0, 'a': 2}
 
 ```
-
 
 ## Authors
 
