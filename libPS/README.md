@@ -18,7 +18,7 @@ ps = PSystem(V, base_struct, m_objects, m_rules, p_rules, i0)
 | `i0` | `int` | Output membrane. Defaults to 1 |
 
 ### ps.steps(n, verbose=False)
-Evolve the system 'n' steps. If verbose is True, prints system's structure in each step
+Evolve the system _n_ steps. If verbose is True, prints system's structure in each step
 
 ### ps.while_evolve(verbose=False)
 Evolve the system until finish all possible iterations. If verbose is True, prints system's structure in each step
@@ -48,13 +48,13 @@ memb = Membrane(V, id, parent, objects, rules, p_rules)
 | `p_rules` | `dict` | Rules priority in membrane. Defaults to {} |
 
 ### memb.add_child(child_id)
-Add child with id 'child_id' to the membrane 'memb'
+Add child with id *child_id* to the membrane *memb*
 
 ### memb.add_plasmids(plasmids)
-Add all plasmid in 'plasmids:list' to the membrane (not working, because not implemented plasmids yet)
+Add all plasmid in *plasmids:list* to the membrane (not working, because plasmids not implemented yet)
 
 ### memb.add_objects(objects)
-Add all the objects in 'objects:string' to the membrane 'memb'
+Add all the objects in *objects:string* to the membrane *memb*
 
 ### memb.get_feasible_rules()
 Get a combination of rules that can be applied all at once in the membrane
@@ -400,7 +400,6 @@ Using as example a **P** system deciding whether k divides n, which was used as 
             <td align="center">Using '.' to dissolve<br>( 'b', '.' )</td>
             <td align="center">Using &delta; to dissolve <br> b &rarr; &delta;</td>
         </tr>
-        <tr><th></th><th></th><th></th></tr>
         <tr><td colspan=3 align="center"><b>Priority</b></td></tr>
         <tr>
             <th>Description</th>
