@@ -21,11 +21,11 @@ class PSystem:
         self.outRegion = i0
 
         # genera la estructura dada
-        self.gen_struct(base_struct, m_objects, m_rules, p_rules)
+        self._gen_struct(base_struct, m_objects, m_rules, p_rules)
         #self.while_evolve()
 
 
-    def gen_struct(self, struct, m_objects, m_rules, p_rules):
+    def _gen_struct(self, struct, m_objects, m_rules, p_rules):
         """Creates system structure.
 
         Args:
@@ -64,27 +64,31 @@ class PSystem:
             print('Incorrect membrane structure')
 
 
-    def steps(self, n=1):
+    def steps(self, n=1, verbose=False):
         """Evolve the system n steps or until finish
 
         Args:
             n (int, optional): Number of steps to evolve. Defaults to 1.
+            verbose (boolean): if verbose = True, prints system's structure in each step. Default to False.
         """
 
         cont = n
         while cont > 0:
             feasible_rules = self.get_feasible_rules()
             self.evolve(feasible_rules)
-            self.print_system()
+            if verbose: self.print_system()
             print("\n--------------------------------------------------------------------------------------------\n")
             cont -= 1
         print("============================================================================================\n")
-        # objectos tras aplicar todas las iteraciones posibles en la región de salida
-        print(self.membranes[self.outRegion].objects)
+        # objectos tras aplicar n pasos en el sistema
+        self.print_system()
 
 
-    def while_evolve(self):
+    def while_evolve(self, verbose=False):
         """Evolve the system until finish
+
+        Args:
+            verbose (boolean): if verbose = True, prints system's structure in each step. Default to False.
         """
         # muestra por pantalla cada estado después de aplicar una regla
         print()
@@ -93,7 +97,7 @@ class PSystem:
         feasible_rules = self.get_feasible_rules()
         while(feasible_rules != []):
             self.evolve(feasible_rules)
-            self.print_system()
+            if verbose: self.print_system()
             feasible_rules = self.get_feasible_rules()
             print("\n--------------------------------------------------------------------------------------------\n")
         print("============================================================================================\n")
@@ -199,10 +203,10 @@ class PSystem:
     def print_system(self):
         """Print system's structure
         """
-        print(self.struct_system())
+        print(self._struct_system())
 
 
-    def struct_system(self, struct='', id=1):
+    def _struct_system(self, struct='', id=1):
         """Recursive function to print system's structure.
 
         Args:
@@ -219,6 +223,6 @@ class PSystem:
         struct = f"[{id} '{objects}' "
         if self.membranes[id].childs != {}:
             for id_child in self.membranes[id].childs:
-                struct += self.struct_system(struct, id_child)
+                struct += self._struct_system(struct, id_child)
         struct += f']{id}'
         return struct

@@ -71,3 +71,8 @@ def problem_nsquared():
             4:[]}
     i0 = 4
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
+
+ps = k_divides_n(15,3)
+#ps = k_divides_n(15,4)
+#ps = problem_nsquared()
+ps.while_evolve(verbose=True)

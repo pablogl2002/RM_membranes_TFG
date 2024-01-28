@@ -17,11 +17,11 @@ ps = PSystem(V, base_struct, m_objects, m_rules, p_rules, i0)
 | `p_rules` | `dict` | Rules priority in each membrane. Defaults to {}|
 | `i0` | `int` | Output membrane. Defaults to 1 |
 
-### ps.steps(n)
-Evolve the system 'n' steps
+### ps.steps(n, verbose=False)
+Evolve the system 'n' steps. If verbose is True, prints system's structure in each step
 
-### ps.while_evolve()
-Evolve the system until finish all possible iterations
+### ps.while_evolve(verbose=False)
+Evolve the system until finish all possible iterations. If verbose is True, prints system's structure in each step
 
 ### ps.evolve(feasible_rules)
 Evolve the system choosing a random membrane from feasible_rules list whose items are a tuple of membrane's id and their rules to apply
@@ -51,7 +51,7 @@ memb = Membrane(V, id, parent, objects, rules, p_rules)
 Add child with id 'child_id' to the membrane 'memb'
 
 ## memb.add_plasmids(plasmids)
-Add all plasmid in 'plasmids:list' to the membrane (not working, because not implented plasmids yet)
+Add all plasmid in 'plasmids:list' to the membrane (not working, because not implemented plasmids yet)
 
 ## memb.add_objects(objects)
 Add all the objects in 'objects:string' to the membrane 'memb'
@@ -93,7 +93,7 @@ p_rules = {1:[],
 i0 = 4
 ps = PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
-ps.while_evolve()
+ps.while_evolve(verbose=True)
 ```
 #### Output
 ```terminal
@@ -166,7 +166,7 @@ p_rules = {1 : [],
 i0 = 3
 ps = PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
-ps.while_evolve()
+ps.while_evolve(verbose=True)
 ```
 #### Output
 ```terminal

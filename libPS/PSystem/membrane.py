@@ -74,24 +74,24 @@ class Membrane:
             list: list of list (due to yields) with feasible rules combinations
         """
 
-        applicable_rules = [r for r in self.rules if self.is_applicable(r)]   # recoge todas las reglas que se pueden aplicar
+        applicable_rules = [r for r in self.rules if self._is_applicable(r)]   # recoge todas las reglas que se pueden aplicar
         promising = []
         for r in applicable_rules:
             # comprueba las prioridades de las reglas
             cond = True
             for r1, r2 in self.p_rules:
-                if r2 == r and self.is_applicable(r1):
+                if r2 == r and self._is_applicable(r1):
                     cond = False
             if cond: promising.append(r)
 
         # comprueba que no haya conflicto entre reglas
             # es decir que si una regla es a -> x y otra es a -> b, que solo se aplique una
-        feasible = self.solve_conflicts(promising)
+        feasible = self._solve_conflicts(promising)
 
         return feasible
 
 
-    def solve_conflicts(self, promising):
+    def _solve_conflicts(self, promising):
         """Solve the conflicts with the rules in a rules' list
 
         Args:
@@ -106,7 +106,7 @@ class Membrane:
 
         for r1 in promising:
             for r2 in promising:
-                key = self.conflict(r1, r2)
+                key = self._conflict(r1, r2)
                 if r1 != r2 and key != None:
                     conflictive[key].add(r1)
                     conflictive[key].add(r2)
@@ -116,7 +116,7 @@ class Membrane:
 
         def is_promising(sol, rule):
             for r in sol:
-                if self.conflict(r, rule): return False
+                if self._conflict(r, rule): return False
             return True
 
         def backtracking(sol):
@@ -134,7 +134,7 @@ class Membrane:
         yield from backtracking([])
 
 
-    def conflict(self, rule1, rule2):
+    def _conflict(self, rule1, rule2):
         """Checks if two rules have conflicts like 'a'-> 'b' and 'ab' -> 'b', both need an 'a' to be apply
 
         Args:
@@ -155,7 +155,7 @@ class Membrane:
                 return a
         return None
     
-    def is_applicable(self, rule):
+    def _is_applicable(self, rule):
         """Checks if a rule ca be applied
 
         Args:
