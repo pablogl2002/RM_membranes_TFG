@@ -326,13 +326,13 @@ Using as example a **P** system deciding whether k divides n, which was used as 
         <tr>
             <td align="center">memb1</td>
             <td align="center">rules</td>
-            <td align="center">{ 1: ('dcx', 'a3')}</td>
+            <td align="center">{ 1: ( 'dcx', 'a3' )}</td>
             <td align="center">{ dcc' &rarr; (a, in<sub>3</sub>)}</td>
         </tr>
         <tr>
             <td align="center">memb2</td>
             <td align="center">rules</td>
-            <td align="center">{ 1:('ac', 'x'),<br>2:('ax', 'c'),<br>3:('d', 'd.') }</td>
+            <td align="center">{ 1: ( 'ac', 'x' ),<br>2: ( 'ax', 'c' ),<br>3: ( 'd', 'd.' ) }</td>
             <td align="center">{ r1: ac &rarr; c',<br>r2: ac' &rarr; c,<br>r3: d &rarr; d&delta; }</td>
         </tr>
         <tr>
@@ -350,8 +350,8 @@ Using as example a **P** system deciding whether k divides n, which was used as 
         <tr>
             <td align="center">memb2</td>
             <td align="center">p_rules</td>
-            <td align="center">[ (1,3), (2,3) ]</td>
-            <td align="center">{ r1 > r3,r2 > r3 }</td>
+            <td align="center">[ ( 1, 3 ), ( 2, 3 ) ]</td>
+            <td align="center">{ r1 > r3, r2 > r3 }</td>
         </tr>
         <tr>
             <td align="center">memb3</td>
@@ -388,12 +388,12 @@ Using as example a **P** system deciding whether k divides n, which was used as 
         <tr>
             <td>Add an object to a membrane</td>
             <td align="center">Using 2 to enter to memb2 <br> ( 'a', 'ab2' )</td>
-            <td align="center">Using in<sub>2</sub> to enter to memb2 <br>a &rarr; a (b,in<sub>2</sub>)</td>
+            <td align="center">Using in<sub>2</sub> to enter to memb2 <br>a &rarr; a ( b, in<sub>2</sub> )</td>
         </tr>
         <tr>
             <td>An object will exit the membrane</td>
             <td align="center">Using 0 to exit the membrane<br>( 'a', 'a0' )</td>
-            <td align="center">Using out to exit the membrane<br>a &arr; (a, out)</td>
+            <td align="center">Using out to exit the membrane<br>a &arr; ( a, out )</td>
         </tr>
         <tr>
             <td>Remove a membrane (dissolve)</td>

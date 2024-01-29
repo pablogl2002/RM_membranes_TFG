@@ -35,6 +35,9 @@ class PSystem:
             p_rules (dict): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority
         """
 
+        def check_struct():
+            pass
+
         open = struct[0]    # variable que indica en qué membrana estamos generando (permite comprobar a la vez que se va generando que la estructura inicial sea correcta)
         id = int(open)      # identificador de la membrana abierta
         # creamos entrada para la primera membrana con sus parametros correspondientes
@@ -207,7 +210,7 @@ class PSystem:
 
 
     def _struct_system(self, struct='', id=1):
-        """Recursive function to print system's structure.
+        """Recursive function that returns system's structure.
 
         Args:
             struct (str, optional): Acumulative structure to do it in a recursive way. Defaults to ''.
