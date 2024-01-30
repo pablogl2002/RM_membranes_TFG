@@ -3,15 +3,15 @@ from .membrane import *
 
 class PSystem:
 
-    def __init__(self, V:list=[], base_struct="11", m_objects={}, m_rules={}, p_rules={}, i0=1):
+    def __init__(self, V:list=[], base_struct="11", m_objects={1:''}, m_rules={1:{}}, p_rules={1:[]}, i0=1):
         """PSystem class constructor.
 
         Args:
             V (list, optional): System's alphabet. Defaults to [].
             base_struct (str, optional): Initial system's structure. Defaults to "11".
-            m_objects (dict, optional): Membrane's objects | key:int = memb_id, value:str = memb_objects. Defaults to {}.
-            m_rules (dict, optional): Membrane's rules | key:int = memb_id, value:dict = memb_rules. Defaults to {}.
-            p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {}.
+            m_objects (dict, optional): Membrane's objects | key:int = memb_id, value:str = memb_objects. Defaults to {1:''}.
+            m_rules (dict, optional): Membrane's rules | key:int = memb_id, value:dict = memb_rules. Defaults to {1:{}}.
+            p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {1:[]}.
             i0 (int, optional): Output membrane. Defaults to 1.
         """
 
@@ -35,9 +35,6 @@ class PSystem:
             p_rules (dict): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority
         """
 
-        def check_struct():
-            pass
-
         open = struct[0]    # variable que indica en qué membrana estamos generando (permite comprobar a la vez que se va generando que la estructura inicial sea correcta)
         id = int(open)      # identificador de la membrana abierta
         # creamos entrada para la primera membrana con sus parametros correspondientes
@@ -46,7 +43,7 @@ class PSystem:
         for m in struct[1:]:
             # print(open)
             # si nos encontramos con un numero diferente al anterior significa que se trata de una membrana hija
-            if m != open[-1]:
+            if m != open[-1] and m not in open[:-1]:
                 # añadimos un hijo a la membrana padre
                 self.membranes[int(open[-1])].add_child(int(m))
                 id = int(m) # actualizamos el identificador
@@ -56,16 +53,17 @@ class PSystem:
                 self.membranes[id] = self.membranes.get(id, memb)
                 # añadimos a la variable auxiliar la membrana hija que se ha abierto
                 open += m
-                
+            
+            # si ya estaba abierta y no es la ultima abierta error por cerrar una membrana que no es la última abierta
+            elif m in open[:-1]:
+                raise NameError('Incorrect membrane structure 1')
             # si es el mismo numero 'cerramos' la membrana
-            else:  
+            else:
                 open = open[:-1]
 
         # en el caso de que sea una estructura incorrecta (creo que podría haber error cuando '123231')
         if open != '':
-            self.membranes = {}
-            print('Incorrect membrane structure')
-
+            raise NameError('Incorrect membrane structure 2')
 
     def steps(self, n=1, verbose=False):
         """Evolve the system n steps or until finish
@@ -77,12 +75,14 @@ class PSystem:
 
         cont = n
         while cont > 0:
+            if verbose: 
+                self.print_system()
+                print("\n--------------------------------------------------------------------------------------------\n")
             feasible_rules = self.get_feasible_rules()
             self.evolve(feasible_rules, verbose)
-            if verbose: self.print_system()
-            print("\n--------------------------------------------------------------------------------------------\n")
             cont -= 1
-        print("============================================================================================\n")
+        self.print_system()
+        print("\n============================================================================================\n")
         # objectos tras aplicar n pasos en el sistema
         self.print_system()
 
@@ -94,16 +94,17 @@ class PSystem:
             verbose (boolean): if verbose = True, prints system's structure in each step. Default to False.
         """
         # muestra por pantalla cada estado después de aplicar una regla
+        #print("\n--------------------------------------------------------------------------------------------\n")
         print()
-        self.print_system()
-        print("\n--------------------------------------------------------------------------------------------\n")
         feasible_rules = self.get_feasible_rules()
         while(feasible_rules != []):
+            if verbose: 
+                self.print_system()
+                print("\n--------------------------------------------------------------------------------------------\n")
             self.evolve(feasible_rules, verbose)
-            if verbose: self.print_system()
             feasible_rules = self.get_feasible_rules()
-            print("\n--------------------------------------------------------------------------------------------\n")
-        print("============================================================================================\n")
+        self.print_system()
+        print("\n============================================================================================\n")
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
         print(self.membranes[self.outRegion].objects)
 

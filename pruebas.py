@@ -1,7 +1,7 @@
 from libPS.PSystem import *
 
 # ~ n es divisible entre k
-def k_divides_n(k,n):
+def k_divides_n(n,k):
     """P System that checks if a number (n) is divisible by another one (k)
 
         Output in membrane 3:
@@ -35,7 +35,7 @@ def k_divides_n(k,n):
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
 
-def k_divides_n2(k,n):
+def k_divides_n2(n,k):
     alphabet = ['a','c','x','d','n','s']
     struct = '122331'
     m_objects = {1:'',
@@ -54,7 +54,6 @@ def k_divides_n2(k,n):
             3 : []}
     i0 = 3
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
-
 
 # ~ n^2
 def problem_nsquared():
@@ -93,3 +92,11 @@ def problem_nsquared():
             4:[]}
     i0 = 4
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
+
+#problem_nsquared().while_evolve(verbose=True)
+
+#k_divides_n(15,3).while_evolve(verbose=True)
+#k_divides_n(15,4).while_evolve(verbose=True)
+
+#k_divides_n2(15,3).while_evolve(verbose=True)
+#k_divides_n2(15,4).while_evolve(verbose=True)

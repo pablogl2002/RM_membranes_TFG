@@ -12,9 +12,9 @@ ps = PSystem(V, base_struct, m_objects, m_rules, p_rules, i0)
 | :-------- | :------- | :------------------------- |
 | `V` | `list` | System's alphabet. Defaults to [] |
 | `base_struct` | `str` | Initial system's structure. Defaults to "11" |
-| `m_objects` | `dict` | Membrane's objects. Defaults to {} |
-| `m_rules` | `dict` | Membrane's rules. Defaults to {} |
-| `p_rules` | `dict` | Rules priority in each membrane. Defaults to {}|
+| `m_objects` | `dict` | Membrane's objects. Defaults to { 1 : '' } |
+| `m_rules` | `dict` | Membrane's rules. Defaults to { 1 : { } } |
+| `p_rules` | `dict` | Rules priority in each membrane. Defaults to { 1: [ ] }|
 | `i0` | `int` | Output membrane. Defaults to 1 |
 
 ### ps.steps(n, verbose=False)
@@ -103,48 +103,62 @@ ps.while_evolve(verbose=True)
 
 #### Output
 ```terminal
-[1 '' [2 '' [3 'af' ]3[4 '' ]4]2]1
+
+[1 '' [2 '' [3 'fa' ]3[4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 3] rules applied : [3, 1]
 memb_id: 3 | n_times: 1 -> rule: ('f', 'ff')
 memb_id: 3 | n_times: 1 -> rule: ('a', 'ax')
-[1 '' [2 '' [3 'affx' ]3[4 '' ]4]2]1
+[1 '' [2 '' [3 'ffax' ]3[4 '' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 3] rules applied : [3, 1]
+memb_id: 3 | n_times: 2 -> rule: ('f', 'ff')
+memb_id: 3 | n_times: 1 -> rule: ('a', 'ax')
+[1 '' [2 '' [3 'ffffaxx' ]3[4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 3] rules applied : [3, 2]
-memb_id: 3 | n_times: 2 -> rule: ('f', 'ff')
+memb_id: 3 | n_times: 4 -> rule: ('f', 'ff')
 memb_id: 3 | n_times: 1 -> rule: ('a', 'x.')
-[1 '' [2 'ffffxx' [4 '' ]4]2]1
+[1 '' [2 'ffffffffxxx' [4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [1, 3]
-memb_id: 2 | n_times: 2 -> rule: ('x', 'b')
-memb_id: 2 | n_times: 2 -> rule: ('ff', 'f')
-[1 '' [2 'bbff' [4 '' ]4]2]1
+memb_id: 2 | n_times: 3 -> rule: ('x', 'b')
+memb_id: 2 | n_times: 4 -> rule: ('ff', 'f')
+[1 '' [2 'ffffbbb' [4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [2, 3]
-memb_id: 2 | n_times: 2 -> rule: ('b', 'bc4')
+memb_id: 2 | n_times: 3 -> rule: ('b', 'bc4')
+memb_id: 2 | n_times: 2 -> rule: ('ff', 'f')
+[1 '' [2 'ffbbb' [4 'ccc' ]4]2]1
+
+--------------------------------------------------------------------------------------------
+
+[membrane 2] rules applied : [2, 3]
+memb_id: 2 | n_times: 3 -> rule: ('b', 'bc4')
 memb_id: 2 | n_times: 1 -> rule: ('ff', 'f')
-[1 '' [2 'bbf' [4 'cc' ]4]2]1
+[1 '' [2 'fbbb' [4 'cccccc' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [2, 4]
-memb_id: 2 | n_times: 2 -> rule: ('b', 'bc4')
+memb_id: 2 | n_times: 3 -> rule: ('b', 'bc4')
 memb_id: 2 | n_times: 1 -> rule: ('f', 'a.')
-[1 'abb' [4 'cccc' ]4]1
-
---------------------------------------------------------------------------------------------
+[1 'abbb' [4 'ccccccccc' ]4]1
 
 ============================================================================================
 
-{'a': 0, 'b': 0, 'f': 0, 'c': 4, 'x': 0}
+{'f': 0, 'a': 0, 'x': 0, 'b': 0, 'c': 9}
+
 ```
 ### k divides n
 
@@ -183,61 +197,62 @@ ps.while_evolve(verbose=True)
 ```
 #### Output
 ```terminal
-[1 '' [2 'cccdaaaaaaaaaaaaaaa' ]2[3 'a' ]3]1
+
+[1 '' [2 'aaaaaaaaaaaaaaadccc' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [1]
 memb_id: 2 | n_times: 3 -> rule: ('ac', 'x')
-[1 '' [2 'daaaaaaaaaaaaxxx' ]2[3 'a' ]3]1
+[1 '' [2 'aaaaaaaaaaaaxxxd' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [2]
 memb_id: 2 | n_times: 3 -> rule: ('ax', 'c')
-[1 '' [2 'cccdaaaaaaaaa' ]2[3 'a' ]3]1
+[1 '' [2 'aaaaaaaaadccc' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [1]
 memb_id: 2 | n_times: 3 -> rule: ('ac', 'x')
-[1 '' [2 'daaaaaaxxx' ]2[3 'a' ]3]1
+[1 '' [2 'aaaaaaxxxd' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [2]
 memb_id: 2 | n_times: 3 -> rule: ('ax', 'c')
-[1 '' [2 'cccdaaa' ]2[3 'a' ]3]1
+[1 '' [2 'aaadccc' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [1]
 memb_id: 2 | n_times: 3 -> rule: ('ac', 'x')
-[1 '' [2 'dxxx' ]2[3 'a' ]3]1
+[1 '' [2 'xxxd' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [3]
 memb_id: 2 | n_times: 1 -> rule: ('d', 'd.')
-[1 'dxxx' [3 'a' ]3]1
-
---------------------------------------------------------------------------------------------
+[1 'xxxd' [3 'a' ]3]1
 
 ============================================================================================
 
-{'c': 0, 'd': 0, 'a': 1, 'x': 0}
+{'a': 1, 'x': 0, 'd': 0, 'c': 0}
+
 ```
 
 In this other case _k_ = 4 not divides _n_ = 15.
 
 ```terminal
+
 [1 '' [2 'ccccdaaaaaaaaaaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [1]
 memb_id: 2 | n_times: 4 -> rule: ('ac', 'x')
-[1 '' [2 'dxxxxaaaaaaaaaaa' ]2[3 'a' ]3]1
+[1 '' [2 'xxxxdaaaaaaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
@@ -249,19 +264,19 @@ memb_id: 2 | n_times: 4 -> rule: ('ax', 'c')
 
 [membrane 2] rules applied : [1]
 memb_id: 2 | n_times: 4 -> rule: ('ac', 'x')
-[1 '' [2 'dxxxxaaa' ]2[3 'a' ]3]1
+[1 '' [2 'xxxxdaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [2]
 memb_id: 2 | n_times: 3 -> rule: ('ax', 'c')
-[1 '' [2 'cccdx' ]2[3 'a' ]3]1
+[1 '' [2 'cccxd' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
 [membrane 2] rules applied : [3]
 memb_id: 2 | n_times: 1 -> rule: ('d', 'd.')
-[1 'cccdx' [3 'a' ]3]1
+[1 'cccxd' [3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
@@ -269,11 +284,9 @@ memb_id: 2 | n_times: 1 -> rule: ('d', 'd.')
 memb_id: 1 | n_times: 1 -> rule: ('dcx', 'a3')
 [1 'cc' [3 'aa' ]3]1
 
---------------------------------------------------------------------------------------------
-
 ============================================================================================
 
-{'c': 0, 'd': 0, 'x': 0, 'a': 2}
+{'c': 0, 'x': 0, 'd': 0, 'a': 2}
 
 ```
 
@@ -338,13 +351,13 @@ Using as example a **P** system deciding whether k divides n, which was used as 
         <tr>
             <td align="center">memb3</td>
             <td align="center">rules</td>
-            <td align="center">{}</td>
+            <td align="center">{ }</td>
             <td align="center">&Oslash;</td>
         </tr>
         <tr>
             <td align="center">memb1</td>
             <td align="center">p_rules</td>
-            <td align="center">[]</td>
+            <td align="center">[ ]</td>
             <td align="center">&Oslash;</td>
         </tr>
         <tr>
@@ -356,7 +369,7 @@ Using as example a **P** system deciding whether k divides n, which was used as 
         <tr>
             <td align="center">memb3</td>
             <td align="center">p_rules</td>
-            <td align="center">[]</td>
+            <td align="center">[ ]</td>
             <td align="center">&Oslash;</td>
         </tr>
         <tr>
@@ -393,7 +406,7 @@ Using as example a **P** system deciding whether k divides n, which was used as 
         <tr>
             <td>An object will exit the membrane</td>
             <td align="center">Using 0 to exit the membrane<br>( 'a', 'a0' )</td>
-            <td align="center">Using out to exit the membrane<br>a &arr; ( a, out )</td>
+            <td align="center">Using out to exit the membrane<br>a &rarr; ( a, out )</td>
         </tr>
         <tr>
             <td>Remove a membrane (dissolve)</td>
