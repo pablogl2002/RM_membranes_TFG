@@ -10,7 +10,7 @@ ps = PSystem(V, base_struct, m_objects, m_rules, p_rules, i0)
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
-| `V` | `list` | System's alphabet. Defaults to [] |
+| `V` | `list` | System's alphabet. Defaults to [ ] |
 | `base_struct` | `str` | Initial system's structure. Defaults to "11" |
 | `m_objects` | `dict` | Membrane's objects. Defaults to { 1 : '' } |
 | `m_rules` | `dict` | Membrane's rules. Defaults to { 1 : { } } |
