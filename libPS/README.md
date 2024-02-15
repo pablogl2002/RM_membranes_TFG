@@ -294,7 +294,7 @@ memb_id: 1 | n_times: 1 -> rule: ('dcx', 'a3')
 
 ### Parameters
 
-Using as example a **P** system deciding whether k divides n, which was used as example of use before:
+Using as example a **P** system deciding whether _k_ divides _n_, which was used as example of use before:
 
 <table>
     <thead>

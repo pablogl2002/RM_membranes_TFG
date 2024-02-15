@@ -65,6 +65,7 @@ class PSystem:
         if open != '':
             raise NameError('Incorrect membrane structure 2')
 
+
     def steps(self, n=1, verbose=False):
         """Evolve the system n steps or until finish
 
