@@ -1,28 +1,30 @@
 import random
+import re
 from .membrane import *
 
 class PSystem:
 
-    def __init__(self, V:list=[], base_struct="11", m_objects={1:''}, m_rules={1:{}}, p_rules={1:[]}, i0=1):
+    def __init__(self, H={}, V:list=[], base_struct="11", m_objects={1:''}, m_rules={1:{}}, m_plasmids={0:[]}, p_rules={1:[]}, i0=1):
         """PSystem class constructor.
 
         Args:
+            H (dict, optional): Plasmids' alphabet and its rules. Defaults to {}.
             V (list, optional): System's alphabet. Defaults to [].
             base_struct (str, optional): Initial system's structure. Defaults to "11".
-            m_objects (dict, optional): Membrane's objects | key:int = memb_id, value:str = memb_objects. Defaults to {1:''}.
-            m_rules (dict, optional): Membrane's rules | key:int = memb_id, value:dict = memb_rules. Defaults to {1:{}}.
+            m_objects (dict, optional): Membranes' objects | key:int = memb_id, value:str = memb_objects. Defaults to {1:''}.
+            m_rules (dict, optional): Membranes' rules | key:int = memb_id, value:dict = memb_rules. Defaults to {1:{}}.
+            m_plasmids (dict, optional): Membranes' plasmids. Defaults to {0:[]}.
             p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {1:[]}.
             i0 (int, optional): Output membrane. Defaults to 1.
         """
 
+        self.plasmids = set(H)
         self.alphabet = set(V)
         self.membranes = {}
-        self.plasmids = {}
         self.outRegion = i0
 
         # genera la estructura dada
         self._gen_struct(base_struct, m_objects, m_rules, p_rules)
-        #self.while_evolve()
 
 
     def _gen_struct(self, struct, m_objects, m_rules, p_rules):
@@ -94,8 +96,6 @@ class PSystem:
         Args:
             verbose (boolean): if verbose = True, prints system's structure in each step. Default to False.
         """
-        # muestra por pantalla cada estado después de aplicar una regla
-        #print("\n--------------------------------------------------------------------------------------------\n")
         print()
         feasible_rules = self.get_feasible_rules()
         while(feasible_rules != []):
@@ -130,6 +130,29 @@ class PSystem:
             
             # divide en parte izquierda y derecha la regla
             lhs, rhs = self.membranes[memb_id].rules[rule_id]
+
+
+
+
+
+
+            # por si es una regla que interactúa con plasmidos, o se ha querido usar la estructura de los corchetes, en la parte derecha de la regla
+            match = re.search(r'(.*)\[(.*)\]', lhs)
+            if match:
+                plasmids, lhs = match.group(1), match.group(2)
+                print(f"plasmids: {plasmids} | lhs: {lhs}")
+            else:
+                plasmids = ""
+            
+            # por si se ha querido usar la estructura de los corchetes en la parte izquierda de la regla
+            match = re.search(r'\[(.*?)\]', rhs)
+            if match:
+                rhs = match.group(1)
+
+
+
+
+
 
             # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla dividido el numero de ocurrencias en la parte izquierda de la regla)
             max_possible_i = min([int(obj/lhs.count(s)) for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
