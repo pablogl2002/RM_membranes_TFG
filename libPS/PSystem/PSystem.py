@@ -18,7 +18,7 @@ class PSystem:
             i0 (int, optional): Output membrane. Defaults to 1.
         """
 
-        self.plasmids = set(H)
+        self.plasmids = H
         self.alphabet = set(V)
         self.membranes = {}
         self.outRegion = i0
