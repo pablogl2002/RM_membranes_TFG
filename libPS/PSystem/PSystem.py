@@ -36,11 +36,11 @@ class PSystem:
             m_rules (dict): Membrane's rules | key:int = memb_id, value:dict = memb_rules
             p_rules (dict): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority
         """
-
+ 
         open = struct[0]    # variable que indica en qué membrana estamos generando (permite comprobar a la vez que se va generando que la estructura inicial sea correcta)
         id = int(open)      # identificador de la membrana abierta
         # creamos entrada para la primera membrana con sus parametros correspondientes
-        self.membranes[id] = self.membranes.get(id, Membrane(V=self.alphabet, id=id, parent=None, objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id]))
+        self.membranes[id] = self.membranes.get(id, Membrane(H=self.plasmids, V=self.alphabet, id=id, parent=None, objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id]))
         # recorremos todas las posiciones del array de estructura 
         for m in struct[1:]:
             # print(open)
@@ -50,7 +50,7 @@ class PSystem:
                 self.membranes[int(open[-1])].add_child(int(m))
                 id = int(m) # actualizamos el identificador
                 # creamos la membrana hija con sus parametros correspondientes
-                memb = Membrane(V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id])
+                memb = Membrane(H=self.plasmids, V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id])
                 # añadimos la membrana al diccionario de mebranas
                 self.membranes[id] = self.membranes.get(id, memb)
                 # añadimos a la variable auxiliar la membrana hija que se ha abierto
@@ -132,22 +132,24 @@ class PSystem:
             lhs, rhs = self.membranes[memb_id].rules[rule_id]
 
 
-
-
-
-
-            # por si es una regla que interactúa con plasmidos, o se ha querido usar la estructura de los corchetes, en la parte derecha de la regla
+            # comprueba si la parte izquierda de la regla tiene una estructura con plasmidos ej. "P1P2[abc]"
             match = re.search(r'(.*)\[(.*)\]', lhs)
             if match:
-                plasmids, lhs = match.group(1), match.group(2)
-                print(f"plasmids: {plasmids} | lhs: {lhs}")
+                plasmids_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
             else:
-                plasmids = ""
+                plasmids_lhs = ""
             
-            # por si se ha querido usar la estructura de los corchetes en la parte izquierda de la regla
-            match = re.search(r'\[(.*?)\]', rhs)
+            # comprueba si la parte derecha de la regla tiene una estructura con plasmidos ej. "[P1P2a2b0c]" | "P1P2a2b0c"
+            match = re.findall(r"P\d+", rhs)
             if match:
-                rhs = match.group(1)
+                rhs = re.sub(r"P\d+", "", rhs)  # obtiene el string de objetos
+                if rhs[0] == "["  and rhs[-1] == "]":
+                    rhs = rhs[1:-1]     # si estaba entre corchetes los quita
+                plasmids_rhs = match
+            else: 
+                plasmids_rhs = ""
+
+
 
 
 

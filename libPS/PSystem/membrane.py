@@ -212,20 +212,22 @@ class Membrane:
         
         lhs, rhs = self.rules[rule_id]  # divide la regla en parte izquierda y derecha
 
-        # comprueba si la parte derecha de la regla tiene una estructura con plasmidos ej. "P1P2[abc]"
+        # comprueba si la parte izquierda de la regla tiene una estructura con plasmidos ej. "P1P2[abc]"
         match = re.search(r'(.*)\[(.*)\]', lhs)
         if match:
             plasmids_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
         else:
             plasmids_lhs = ""
         
-        # comprueba si la parte izquierda de la regla tiene una estructura con plasmidos ej. "[P1P2abc]" | "P1P2abc"
+        # comprueba si la parte derecha de la regla tiene una estructura con plasmidos ej. "[P1P2a2b0c]" | "P1P2a2b0c"
         match = re.findall(r"P\d+", rhs)
         if match:
             rhs = re.sub(r"P\d+", "", rhs)  # obtiene el string de objetos
             if rhs[0] == "["  and rhs[-1] == "]":
                 rhs = rhs[1:-1]     # si estaba entre corchetes los quita
             plasmids_rhs = match
+        else: 
+            plasmids_rhs = ""
 
         # para cada plasmido en la regla comprueba si se encuentra en los plásmidos que pueden entrar a la membrana
         for p in plasmids_lhs:
