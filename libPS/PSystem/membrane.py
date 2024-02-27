@@ -18,17 +18,17 @@ class Membrane:
             p_rules (dict, optional): Rules priority in membrane. Defaults to {}.
         """
 
-        self.plasmids = H                               # plasmids' alphabet and its rules
-        self.alphabet = V                               # membrane's alphabet
-        self.id = id                                    # membrane's id
-        self.parent = parent                            # parent's id
-        self.childs = set()                             # childs' ids set list
-        self.rules = rules                              # rules' dict
-        self.p_rules = p_rules                          # rules' priority dict
-        self.plasmids_in = set(plasmids)                # plasmids' set list
-        self.accessible_plasmids = accessible_plasmids  # plasmids that can access the membrane   
-        self.objects = {}                               # membrane object's dict
-        self.rhs_alphabet = V.copy()                    # rhs rules' alphabet
+        self.plasmids = H                                   # plasmids' alphabet and its rules
+        self.alphabet = V                                   # membrane's alphabet
+        self.id = id                                        # membrane's id
+        self.parent = parent                                # parent's id
+        self.childs = set()                                 # childs' ids set list
+        self.rules = rules                                  # rules' dict
+        self.p_rules = p_rules                              # rules' priority dict
+        self.plasmids_in = set(plasmids)                    # plasmids' set list
+        self.accessible_plasmids = set(accessible_plasmids) # plasmids that can access the membrane   
+        self.objects = {}                                   # membrane object's dict
+        self.rhs_alphabet = V.copy()                        # rhs rules' alphabet
 
         self.rhs_alphabet.add('0')  # se añade al alfabeto de la parte derecha un 0 para sacar objeto
         self.rhs_alphabet.add('.')  # se añade al alfabeto de la parte derecha un . para disolver membrana

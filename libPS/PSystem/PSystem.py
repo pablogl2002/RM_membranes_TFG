@@ -4,7 +4,7 @@ from .membrane import *
 
 class PSystem:
 
-    def __init__(self, H={}, V:list=[], base_struct="11", m_objects={1:''}, m_rules={1:{}}, m_plasmids={0:[]}, p_rules={1:[]}, i0=1):
+    def __init__(self, H={}, V:list=[], base_struct="11", m_objects={1:''}, m_rules={1:{}}, p_rules={1:[]}, i0=1):
         """PSystem class constructor.
 
         Args:
@@ -13,7 +13,6 @@ class PSystem:
             base_struct (str, optional): Initial system's structure. Defaults to "11".
             m_objects (dict, optional): Membranes' objects | key:int = memb_id, value:str = memb_objects. Defaults to {1:''}.
             m_rules (dict, optional): Membranes' rules | key:int = memb_id, value:dict = memb_rules. Defaults to {1:{}}.
-            m_plasmids (dict, optional): Membranes' plasmids. Defaults to {0:[]}.
             p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {1:[]}.
             i0 (int, optional): Output membrane. Defaults to 1.
         """
@@ -148,11 +147,6 @@ class PSystem:
                 plasmids_rhs = match
             else: 
                 plasmids_rhs = ""
-
-
-
-
-
 
 
 
