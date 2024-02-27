@@ -202,14 +202,20 @@ class Membrane:
         else:
             plasmids_lhs = ""
         
-        
         match = re.split(r"P\d+", rhs)
         if match:
             rhs = re.sub(r"P\d+", "", rhs)
             if rhs[0] == "["  and rhs[-1] == "]":
-                rhs = re.sub(r"\[(.*?)\]", r"\1", rhs)
+                # rhs = re.sub(r"\[(.*?)\]", r"\1", rhs)
+                rhs = rhs[1:-1]
             plasmids_rhs = match.group(1)
 
+        for p in plasmids_lhs:
+            if p not in self.accessible_plasmids:
+                return False
+        for p in plasmids_rhs:
+            if p not in self.accessible_plasmids:
+                return False
 
         for obj in self.alphabet:
             if self.objects[obj] < self.rules[rule_id][0].count(obj):
