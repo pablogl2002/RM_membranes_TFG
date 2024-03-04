@@ -48,16 +48,16 @@ class Membrane:
         self.rhs_alphabet.add(str(child))
     
 
-    def add_plasmids(self, plasmids:list):
-        """Add plasmid to the membrane.
+    # def add_plasmids(self, plasmids:list):
+    #     """Add plasmid to the membrane.
 
-        Args:
-            plasmids (list): list of plasmids' id 
-        """
+    #     Args:
+    #         plasmids (list): list of plasmids' id 
+    #     """
 
-        # for plasmid in plasmids:
-        #     self.rules.add(plasmid)
-        pass
+    #     # for plasmid in plasmids:
+    #     #     self.rules.add(plasmid)
+    #     pass
     
 
     def add_objects(self, objects:str):
@@ -86,8 +86,16 @@ class Membrane:
         Returns:
             list: list of list (due to yields) with feasible rules combinations
         """
+        rules = self.rules
+        for pr in self.plasmids_in:
+            rules = rules | self.plasmids[pr]
 
-        applicable_rules = [r for r in self.rules if self._is_applicable(r)]   # recoge todas las reglas que se pueden aplicar
+        print(f"rules: {rules}")
+
+        applicable_rules = [r for r in rules if self._is_applicable(r)]  # recoge todas las reglas que se pueden aplicar
+
+        print(f"applicable_rules: {applicable_rules}")
+
         promising = []
         for r in applicable_rules:
             # comprueba las prioridades de las reglas
@@ -219,21 +227,30 @@ class Membrane:
         else:
             plasmids_lhs = ""
         
+        match = re.search(r'(.*)\[(.*)\]', rhs)
+        if match:
+            plasmids_out_rhs, rhs = match.group(1), match.group(2)
+        else: 
+            plasmids_out_rhs = ""
         # comprueba si la parte derecha de la regla tiene una estructura con plasmidos ej. "[P1P2a2b0c]" | "P1P2a2b0c"
         match = re.findall(r"P\d+", rhs)
         if match:
             rhs = re.sub(r"P\d+", "", rhs)  # obtiene el string de objetos
             if rhs[0] == "["  and rhs[-1] == "]":
                 rhs = rhs[1:-1]     # si estaba entre corchetes los quita
-            plasmids_rhs = match
+            plasmids_in_rhs = match
         else: 
-            plasmids_rhs = ""
+            plasmids_in_rhs = ""
+
 
         # para cada plasmido en la regla comprueba si se encuentra en los plásmidos que pueden entrar a la membrana
         for p in plasmids_lhs:
             if p not in self.accessible_plasmids:
                 return False
-        for p in plasmids_rhs:
+        for p in plasmids_in_rhs:
+            if p not in self.accessible_plasmids:
+                return False
+        for p in plasmids_out_rhs:
             if p not in self.accessible_plasmids:
                 return False
 

@@ -93,10 +93,10 @@ def problem_nsquared():
     i0 = 4
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
-#problem_nsquared().while_evolve(verbose=True)
+problem_nsquared().while_evolve(verbose=True)
 
-#k_divides_n(15,3).while_evolve(verbose=True)
-#k_divides_n(15,4).while_evolve(verbose=True)
+# k_divides_n(15,3).while_evolve(verbose=True)
+# k_divides_n(15,4).while_evolve(verbose=True)
 
-#k_divides_n2(15,3).while_evolve(verbose=True)
-#k_divides_n2(15,4).while_evolve(verbose=True)
+# k_divides_n2(15,3).while_evolve(verbose=True)
+# k_divides_n2(15,4).while_evolve(verbose=True)

@@ -2,8 +2,10 @@ from libPS.PSystem import *
 
 def resta_aritmética(n,m):
     alphabet = ['a','b','c','p','q']
-    plasmids = {"P1":[('a','a0')],
-                "P2":[('ab','c0')]}
+    plasmids = {
+              "P1":{"P11":('a','a0')} ,
+              "P2":{"P21":('ab','c0')}
+               }
     struct = '122331'
     m_objects = {0:'',
                  1:'pq',
@@ -24,3 +26,7 @@ def resta_aritmética(n,m):
     i0 = 2
 
     return PSystem(H=plasmids, V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
+
+
+
+resta_aritmética(4,8).while_evolve(verbose=True)
