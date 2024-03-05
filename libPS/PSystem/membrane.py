@@ -48,18 +48,6 @@ class Membrane:
         self.rhs_alphabet.add(str(child))
     
 
-    # def add_plasmids(self, plasmids:list):
-    #     """Add plasmid to the membrane.
-
-    #     Args:
-    #         plasmids (list): list of plasmids' id 
-    #     """
-
-    #     # for plasmid in plasmids:
-    #     #     self.rules.add(plasmid)
-    #     pass
-    
-
     def add_objects(self, objects:str):
         """Add objects to the membranes.
 
@@ -90,11 +78,11 @@ class Membrane:
         for pr in self.plasmids_in:
             rules = rules | self.plasmids[pr]
 
-        print(f"rules: {rules}")
+        # print(f"\nrules: {rules}")
 
         applicable_rules = [r for r in rules if self._is_applicable(r)]  # recoge todas las reglas que se pueden aplicar
 
-        print(f"applicable_rules: {applicable_rules}")
+        # print(f"\napplicable_rules: {applicable_rules}")
 
         promising = []
         for r in applicable_rules:
@@ -177,7 +165,7 @@ class Membrane:
 
         lhs1, _ = self.rules[rule1]     # cogemos parte izquierda de la primera regla
         lhs2, _ = self.rules[rule2]     # cogemos parte izquierda de la segunda regla
-
+        
         # comprueba si la primera regla tiene una estructura con plasmidos ej. "P1P2[abc]"
         match1 = re.search(r'(.*)\[(.*)\]', lhs1)
         if match1:
@@ -217,31 +205,36 @@ class Membrane:
         Returns:
             boolean: if the can be applied to the system or not
         """
-        
-        lhs, rhs = self.rules[rule_id]  # divide la regla en parte izquierda y derecha
 
+        lhs, rhs = self.rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]   # divide la regla en parte izquierda y derecha
+        
         # comprueba si la parte izquierda de la regla tiene una estructura con plasmidos ej. "P1P2[abc]"
         match = re.search(r'(.*)\[(.*)\]', lhs)
         if match:
             plasmids_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
+            if plasmids_lhs == "" : 
+                plasmids_lhs = []
+            else:
+                plasmids_lhs = re.findall(r"P\d+", plasmids_lhs)
         else:
-            plasmids_lhs = ""
+            plasmids_lhs = []
         
         match = re.search(r'(.*)\[(.*)\]', rhs)
         if match:
             plasmids_out_rhs, rhs = match.group(1), match.group(2)
+            if plasmids_out_rhs == "" : plasmids_out_rhs = []
         else: 
-            plasmids_out_rhs = ""
+            plasmids_out_rhs = []
+
         # comprueba si la parte derecha de la regla tiene una estructura con plasmidos ej. "[P1P2a2b0c]" | "P1P2a2b0c"
         match = re.findall(r"P\d+", rhs)
-        if match:
+        if match != []:
             rhs = re.sub(r"P\d+", "", rhs)  # obtiene el string de objetos
-            if rhs[0] == "["  and rhs[-1] == "]":
+            if rhs != '' and rhs[0] == "["  and rhs[-1] == "]":
                 rhs = rhs[1:-1]     # si estaba entre corchetes los quita
             plasmids_in_rhs = match
         else: 
-            plasmids_in_rhs = ""
-
+            plasmids_in_rhs = []
 
         # para cada plasmido en la regla comprueba si se encuentra en los plásmidos que pueden entrar a la membrana
         for p in plasmids_lhs:
@@ -256,10 +249,11 @@ class Membrane:
 
         # para cada objeto de la parte izquierda comprueba que tiene suficientes como para sustituirlos
         for obj in self.alphabet:
-            if self.objects[obj] < self.rules[rule_id][0].count(obj):
+            if self.objects[obj] < lhs.count(obj):
                 return False
         # para los objetos de la parte derecha comprueba que sean del alfabeto
-        for obj in self.rules[rule_id][1]:
+        for obj in rhs:
             if obj not in self.rhs_alphabet:
                 return False
+
         return True

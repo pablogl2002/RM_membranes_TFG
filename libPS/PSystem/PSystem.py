@@ -4,7 +4,7 @@ from .membrane import *
 
 class PSystem:
 
-    def __init__(self, H={}, V:list=[], base_struct="11", m_objects={1:''}, m_rules={1:{}}, p_rules={1:[]}, i0=1):
+    def __init__(self, H={}, V:list=[], base_struct="11", m_objects={0:''}, m_plasmids={0:[]}, m_rules={1:{}}, p_rules={1:[]}, i0=1):
         """PSystem class constructor.
 
         Args:
@@ -21,12 +21,13 @@ class PSystem:
         self.alphabet = set(V)
         self.membranes = {}
         self.outRegion = i0
+        self.enviroment = {"plasmids":set(), "objects":{}}
 
         # genera la estructura dada
-        self._gen_struct(base_struct, m_objects, m_rules, p_rules)
+        self._gen_struct(base_struct, m_objects, m_plasmids, m_rules, p_rules)
 
 
-    def _gen_struct(self, struct, m_objects, m_rules, p_rules):
+    def _gen_struct(self, struct, m_objects, m_plasmids, m_rules, p_rules):
         """Creates system structure.
 
         Args:
@@ -36,10 +37,19 @@ class PSystem:
             p_rules (dict): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority
         """
  
+        # preparacion del entorno
+        self.enviroment['plasmids'] = m_plasmids[0] # añadir al entorno sus plásmidos
+
+        # añadir al entorno sus objetos 
+        objects = m_objects[0]
+        for obj in self.alphabet:
+            count = objects.count(obj)
+            self.enviroment['objects'][obj] = self.enviroment['objects'].get(obj, 0) + count
+
         open = struct[0]    # variable que indica en qué membrana estamos generando (permite comprobar a la vez que se va generando que la estructura inicial sea correcta)
         id = int(open)      # identificador de la membrana abierta
         # creamos entrada para la primera membrana con sus parametros correspondientes
-        self.membranes[id] = self.membranes.get(id, Membrane(H=self.plasmids, V=self.alphabet, id=id, parent=None, objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id]))
+        self.membranes[id] = self.membranes.get(id, Membrane(H=self.plasmids, V=self.alphabet, id=id, parent=None, objects=m_objects[id], rules=m_rules[id], plasmids=m_plasmids[id], accessible_plasmids=self.enviroment['plasmids'], p_rules=p_rules[id]))
         # recorremos todas las posiciones del array de estructura 
         for m in struct[1:]:
             # print(open)
@@ -49,7 +59,7 @@ class PSystem:
                 self.membranes[int(open[-1])].add_child(int(m))
                 id = int(m) # actualizamos el identificador
                 # creamos la membrana hija con sus parametros correspondientes
-                memb = Membrane(H=self.plasmids, V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id], rules=m_rules[id], p_rules=p_rules[id])
+                memb = Membrane(H=self.plasmids, V=self.alphabet, id=id, parent=int(open[-1]), objects=m_objects[id], rules=m_rules[id], plasmids=m_plasmids[id], accessible_plasmids=m_plasmids[int(open[-1])], p_rules=p_rules[id])
                 # añadimos la membrana al diccionario de mebranas
                 self.membranes[id] = self.membranes.get(id, memb)
                 # añadimos a la variable auxiliar la membrana hija que se ha abierto
@@ -106,8 +116,8 @@ class PSystem:
         self.print_system()
         print("\n============================================================================================\n")
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
-        print(self.membranes[self.outRegion].objects)
-
+        print(sorted(self.membranes[self.outRegion].objects.items()))
+        
 
     def evolve(self, feasible_rules, verbose=False):
         """Makes an iteration on the system choosing a random membrane to apply its rules.
@@ -128,58 +138,87 @@ class PSystem:
             if dissolve == True: break
             
             # divide en parte izquierda y derecha la regla
-            lhs, rhs = self.membranes[memb_id].rules[rule_id]
-
+            lhs, rhs = self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]
+            
+            # comprueba si la parte izquierda de la regla tiene una estructura con plasmidos ej. "P1P2[abc]"
+            match = re.search(r'(.*)\[(.*)\]', lhs)
+            if match:
+                plasmids_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
+                if plasmids_lhs == "" : 
+                    plasmids_lhs = []
+                else:
+                    plasmids_lhs = re.findall(r"P\d+", plasmids_lhs)
+            else:
+                plasmids_lhs = []
+                        
             match = re.search(r'(.*)\[(.*)\]', rhs)
             if match:
                 plasmids_out_rhs, rhs = match.group(1), match.group(2)
-            else:
-                plasmids_out_rhs = ""
+                if plasmids_out_rhs == "" : plasmids_out_rhs = []
+            else: 
+                plasmids_out_rhs = []
+
             # comprueba si la parte derecha de la regla tiene una estructura con plasmidos ej. "[P1P2a2b0c]" | "P1P2a2b0c"
             match = re.findall(r"P\d+", rhs)
-            if match:
+            if match != []:
                 rhs = re.sub(r"P\d+", "", rhs)  # obtiene el string de objetos
-                if rhs[0] == "["  and rhs[-1] == "]":
+                if rhs != '' and rhs[0] == "["  and rhs[-1] == "]":
                     rhs = rhs[1:-1]     # si estaba entre corchetes los quita
                 plasmids_in_rhs = match
             else: 
-                plasmids_in_rhs = ""
-
+                plasmids_in_rhs = []
+                
             # de la membrana elegida sacamos el id de la membrana padre 
             parent_id = self.membranes[memb_id].parent
 
             if plasmids_out_rhs != "":
             # plasmidos que se sacan de la membrana
                 # recorrer las membranas hija de la membrana padre para añadir los plásmidos a los plásmidos accesibles    
-                for child in self.membranes[parent_id].childs:
-                    self.membranes[child].accessible_plasmids.update(plasmids_out_rhs)
+                if parent_id != None:
+                    for child in self.membranes[parent_id].childs:
+                        self.membranes[child].accessible_plasmids.update(plasmids_out_rhs)
+                else:
+                    self.membranes[memb_id].accessible_plasmids.update(plasmids_out_rhs)
+
                 # recorrer las membranas hija para borrar los plásmidos de los plásmidos accesibles
                 for child in self.membranes[memb_id].childs:
                     self.membranes[child].accessible_plasmids.difference_update(plasmids_out_rhs)
+                
                 # añadir a la membrana padre los plasmidos que salen
-                self.membranes[parent_id].plasmids_in.update(plasmids_out_rhs)
+                if parent_id != None:
+                    self.membranes[parent_id].plasmids_in.update(plasmids_out_rhs)
+                else:
+                    self.enviroment['plasmids'].update(plasmids_out_rhs)
                 # borrar de la membrana los plásmidos
                 self.membranes[memb_id].plasmids_in.difference_update(plasmids_out_rhs)
 
             if plasmids_in_rhs != "":
             # plasmidos que entran en la membrana
-                # recorrer las membranas hija de la membrana padre para borrar los plásmidos de los plásmidos accesibles
-                for child in self.membranes[parent_id].childs:
-                    self.membranes[child].accessible_plasmids.difference_update(plasmids_in_rhs)
+                if parent_id != None:
+                    # recorrer las membranas hija de la membrana padre para borrar los plásmidos de los plásmidos accesibles
+                    for child in self.membranes[parent_id].childs:
+                        self.membranes[child].accessible_plasmids.difference_update(plasmids_in_rhs)
+                else:
+                    self.membranes[memb_id].accessible_plasmids.difference_update(plasmids_in_rhs)
+
                 # recorrer las membranas hija para añadir los plásmidos a los plásmidos accesibles 
                 for child in self.membranes[memb_id].childs:
                     self.membranes[child].accessible_plasmids.update(plasmids_in_rhs)
+                
                 # borrar de la membrana padre los plásmidos que entran
-                self.membranes[parent_id].plasmids_in.difference_update(plasmids_in_rhs)
+                if parent_id != None:
+                    self.membranes[parent_id].plasmids_in.difference_update(plasmids_in_rhs)
+                else:
+                    self.enviroment['plasmids'].difference_update(plasmids_out_rhs)
+
                 # añadir a la membrana los plásmidos
                 self.membranes[memb_id].plasmids_in.update(plasmids_in_rhs)
 
-
             # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla dividido el numero de ocurrencias en la parte izquierda de la regla)
-            max_possible_i = min([int(obj/lhs.count(s)) for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
+            max_possible_i = min([int(obj/lhs.count(s)) for s, obj in self.membranes[memb_id].objects.items() if s in lhs]) if lhs != "" else 0
 
             # printea membrana y regla
-            if verbose: print(f'memb_id: {memb_id} | n_times: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id]}')
+            if verbose: print(f'memb_id: {memb_id} | n_times: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]}')
 
             # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
             for obj in lhs:
@@ -220,6 +259,8 @@ class PSystem:
                             if parent_id != None:
                                 # saca a la membrana padre el objeto
                                 self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + max_possible_i
+                            else:
+                                self.enviroment['objects'][rhs[i]] = self.enviroment['objects'][rhs[i]] + max_possible_i
 
                     # caso de adicion a la propia membrana
                     else:
