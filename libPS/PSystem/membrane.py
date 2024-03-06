@@ -211,13 +211,22 @@ class Membrane:
         # comprueba si la parte izquierda de la regla tiene una estructura con plasmidos ej. "P1P2[abc]"
         match = re.search(r'(.*)\[(.*)\]', lhs)
         if match:
-            plasmids_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
-            if plasmids_lhs == "" : 
-                plasmids_lhs = []
+            plasmids_out_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
+            if plasmids_out_lhs == "" : 
+                plasmids_out_lhs = []
             else:
-                plasmids_lhs = re.findall(r"P\d+", plasmids_lhs)
+                plasmids_out_lhs = re.findall(r"P\d+", plasmids_out_lhs)
+            match = re.findall(r"P\d+", lhs)
+            if match != []:
+                lhs = re.sub(r"P\d+", "", lhs)  # obtiene el string de objetos
+                if lhs != '' and lhs[0] == "["  and lhs[-1] == "]":
+                    lhs = lhs[1:-1]     # si estaba entre corchetes los quita
+                plasmids_in_lhs = match
+            else:
+                plasmids_in_lhs = []
         else:
-            plasmids_lhs = []
+            plasmids_out_lhs = []
+            plasmids_in_lhs = []
         
         match = re.search(r'(.*)\[(.*)\]', rhs)
         if match:
@@ -237,14 +246,17 @@ class Membrane:
             plasmids_in_rhs = []
 
         # para cada plasmido en la regla comprueba si se encuentra en los plásmidos que pueden entrar a la membrana
-        for p in plasmids_lhs:
+        for p in plasmids_in_lhs:
+            if p not in self.plasmids_in:
+                return False
+        for p in plasmids_out_lhs:
             if p not in self.accessible_plasmids:
                 return False
         for p in plasmids_in_rhs:
-            if p not in self.accessible_plasmids:
+            if p not in self.accessible_plasmids and p not in self.plasmids_in:
                 return False
         for p in plasmids_out_rhs:
-            if p not in self.accessible_plasmids:
+            if p not in self.accessible_plasmids and p not in self.plasmids_in:
                 return False
 
         # para cada objeto de la parte izquierda comprueba que tiene suficientes como para sustituirlos

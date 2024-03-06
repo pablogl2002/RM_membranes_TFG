@@ -42,6 +42,4 @@ def producto_aritmetico(n, m):
     
 
 
-
-
-# resta_aritmetica(4,8).while_evolve(verbose=True)
+resta_aritmetica(10,16).while_evolve(verbose=True)

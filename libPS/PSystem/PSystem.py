@@ -143,14 +143,23 @@ class PSystem:
             # comprueba si la parte izquierda de la regla tiene una estructura con plasmidos ej. "P1P2[abc]"
             match = re.search(r'(.*)\[(.*)\]', lhs)
             if match:
-                plasmids_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
-                if plasmids_lhs == "" : 
-                    plasmids_lhs = []
+                plasmids_out_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
+                if plasmids_out_lhs == "" : 
+                    plasmids_out_lhs = []
                 else:
-                    plasmids_lhs = re.findall(r"P\d+", plasmids_lhs)
+                    plasmids_out_lhs = re.findall(r"P\d+", plasmids_out_lhs)
+                match = re.findall(r"P\d+", lhs)
+                if match != []:
+                    lhs = re.sub(r"P\d+", "", lhs)  # obtiene el string de objetos
+                    if lhs != '' and lhs[0] == "["  and lhs[-1] == "]":
+                        lhs = lhs[1:-1]     # si estaba entre corchetes los quita
+                    plasmids_in_lhs = match
+                else:
+                    plasmids_in_lhs = []
             else:
-                plasmids_lhs = []
-                        
+                plasmids_out_lhs = []
+                plasmids_in_lhs = []
+
             match = re.search(r'(.*)\[(.*)\]', rhs)
             if match:
                 plasmids_out_rhs, rhs = match.group(1), match.group(2)
