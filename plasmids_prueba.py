@@ -32,14 +32,11 @@ def resta_aritmetica(n,m):
 
     return PSystem(H=plasmids, V=alphabet, base_struct=struct, m_objects=m_objects, m_plasmids=m_plasmids, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
-
-def producto_aritmetico(n, m):
-    alphabet = ['a','b','p','x','q','r','t','s']
-    plasmids = {
-              "P1":{"P11":('ba','b')},
-              "P2":{"P21":('a',"ab0")}
-               }
-    
-
-
 resta_aritmetica(10,16).while_evolve(verbose=True)
+
+# def producto_aritmetico(n, m):
+#     alphabet = ['a','b','p','x','q','r','t','s']
+#     plasmids = {
+#               "P1":{"P11":('ba','b')},
+#               "P2":{"P21":('a',"ab0")}
+#                }

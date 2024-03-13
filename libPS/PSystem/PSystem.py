@@ -4,7 +4,7 @@ from .membrane import *
 
 class PSystem:
 
-    def __init__(self, H={}, V:list=[], base_struct="11", m_objects={0:''}, m_plasmids={0:[]}, m_rules={1:{}}, p_rules={1:[]}, i0=1):
+    def __init__(self, H=None, V:list=[], base_struct="11", m_objects={0:''}, m_plasmids=None, m_rules={1:{}}, p_rules={1:[]}, i0=1):
         """PSystem class constructor.
 
         Args:
@@ -16,12 +16,33 @@ class PSystem:
             p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {1:[]}.
             i0 (int, optional): Output membrane. Defaults to 1.
         """
-
-        self.plasmids = H
+        
         self.alphabet = set(V)
         self.membranes = {}
         self.outRegion = i0
         self.enviroment = {"plasmids":set(), "objects":{}}
+
+        # preparar por si no se trabaja con plásmidos que no de ningún tipo de error
+        if H == None:
+            self.plasmids = {}
+            m_plasmids = {i: set() for i in range(int(max(base_struct)) + 1)}
+        else:
+            self.plasmids = H
+
+        # en el caso de que no le pasemos a alguna membrana los objetos, los inicializa a sin objetos
+        if len(m_objects.keys()) != int(max(base_struct)) + 1:
+            for i in range(int(max(base_struct)) + 1):
+                m_objects[i] = m_objects.get(i, '')
+        
+        # en el caso de que no le pasemos a alguna membrana las reglas, las inicializa a sin reglas
+        if len(m_rules.keys()) != int(max(base_struct)):
+            for i in range(1, int(max(base_struct)) + 1):
+                m_rules[i] = m_rules.get(i, {})
+
+        # en el caso de que no le pasemos a alguna membrana las prioridades, los inicializa a sin prioridades
+        if len(p_rules.keys()) != int(max(base_struct)):
+            for i in range(1, int(max(base_struct)) + 1):
+                p_rules[i] = p_rules.get(i, [])
 
         # genera la estructura dada
         self._gen_struct(base_struct, m_objects, m_plasmids, m_rules, p_rules)
