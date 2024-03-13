@@ -239,7 +239,7 @@ class PSystem:
                 if parent_id != None:
                     self.membranes[parent_id].plasmids_in.difference_update(plasmids_in_rhs)
                 else:
-                    self.enviroment['plasmids'].difference_update(plasmids_out_rhs)
+                    self.enviroment['plasmids'].difference_update(plasmids_in_rhs)
 
                 # añadir a la membrana los plásmidos
                 self.membranes[memb_id].plasmids_in.update(plasmids_in_rhs)
@@ -248,7 +248,7 @@ class PSystem:
             max_possible_i = min([int(obj/lhs.count(s)) for s, obj in self.membranes[memb_id].objects.items() if s in lhs]) if lhs != "" else 0
 
             # printea membrana y regla
-            if verbose: print(f'memb_id: {memb_id} | n_times: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]}')
+            if verbose: print(f"memb_id: {memb_id} | n_times: {max_possible_i} -> rule '{rule_id}':  {self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]}")
 
             # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
             for obj in lhs:
@@ -291,7 +291,7 @@ class PSystem:
                                 self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + max_possible_i
                             else:
                                 self.enviroment['objects'][rhs[i]] = self.enviroment['objects'][rhs[i]] + max_possible_i
-
+                                
                     # caso de adicion a la propia membrana
                     else:
                         # añade objeto a la membrana
@@ -323,7 +323,7 @@ class PSystem:
         print(self._struct_system())
 
 
-    def _struct_system(self, struct='', id=1):
+    def _struct_system(self, struct='', id=0):
         """Recursive function that returns system's structure.
 
         Args:
@@ -333,13 +333,30 @@ class PSystem:
         Returns:
             str: Generate a more visual form of the system
         """
-        
-        objects = ''
-        for obj, n in self.membranes[id].objects.items():
-            objects += obj*n
-        struct = f"[{id} '{objects}' "
-        if self.membranes[id].childs != {}:
-            for id_child in self.membranes[id].childs:
-                struct += self._struct_system(struct, id_child)
-        struct += f']{id}'
+
+        if id == 0:
+            env_objects = ''
+            env_plasmids = ''
+            for obj, n in sorted(self.enviroment['objects'].items()):
+                env_objects += obj*n
+            for p in sorted(self.enviroment['plasmids']):
+                env_plasmids += p
+
+            struct = f" '{env_plasmids}' '{env_objects}' "
+
+            struct += self._struct_system(struct, id=1)
+        else:
+            objects = ''
+            plasmids = ''
+            for obj, n in sorted(self.membranes[id].objects.items()):
+                objects += obj*n
+            for p in sorted(self.membranes[id].plasmids_in):
+                plasmids += p
+            struct = f" [{id} '{plasmids}' '{objects}' "
+            if self.membranes[id].childs != {}:
+                for id_child in self.membranes[id].childs:
+                    struct += self._struct_system(struct, id_child)
+            struct += f']{id}'
+
         return struct
+                
