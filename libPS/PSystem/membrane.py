@@ -42,17 +42,6 @@ class Membrane:
         self.rhs_alphabet.add(str(child))
     
 
-    def add_plasmids(self, plasmids:list):
-        """Add plasmid to the membrane.
-
-        Args:
-            plasmids (list): list of plasmids' id 
-        """
-
-        for plasmid in plasmids:
-            self.rules.add(plasmid)
-    
-
     def add_objects(self, objects:str):
         """Add objects to the membranes.
 
