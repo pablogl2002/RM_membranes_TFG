@@ -95,8 +95,8 @@ def problem_nsquared():
 
 problem_nsquared().while_evolve(verbose=True)
 
-#k_divides_n(15,3).while_evolve(verbose=True)
-#k_divides_n(15,4).while_evolve(verbose=True)
+# k_divides_n(15,3).while_evolve(verbose=True)
+# k_divides_n(15,4).while_evolve(verbose=True)
 
 # k_divides_n2(15,3).while_evolve(verbose=True)
 # k_divides_n2(15,4).while_evolve(verbose=True)

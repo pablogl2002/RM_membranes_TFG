@@ -19,10 +19,9 @@ class PSystem:
         self.membranes = {}
         self.plasmids = {}
         self.outRegion = i0
-
+        
         # genera la estructura dada
         self._gen_struct(base_struct, m_objects, m_rules, p_rules)
-        #self.while_evolve()
 
 
     def _gen_struct(self, struct, m_objects, m_rules, p_rules):
@@ -129,7 +128,7 @@ class PSystem:
             # si la regla tiene una estructura sin plásmidos se aplica con esta función
             dissolve = self._apply_rule(memb_id, rule_id, verbose)
             # si la regla tiene estructura de membranas se aplica con esta otra función
-            dissolve = self._apply_plasmids_rule()
+            # dissolve = self._apply_plasmids_rule()
             
             
     def _apply_rule(self, memb_id, rule_id, verbose=False):
@@ -223,7 +222,6 @@ class PSystem:
         return dissolve
         
 
-
     def get_feasible_rules(self):
         """Get feasible rules from all membranes in the system.
 
@@ -235,12 +233,117 @@ class PSystem:
         # recorre todas las membranas y va añadiendo en feasible_rules las reglas factibles
         for id, memb in self.membranes.items():
             # obtiene las reglas factibles de una membrana
-            all_f_rules = list(memb.get_feasible_rules())
+            all_f_rules = list(self.get_memb_feasible_rules(id))
+            # all_f_rules = list(memb.get_feasible_rules())
+
             rules = random.choice(all_f_rules)
             # en el caso de que se obtengan reglas las añade en feasible_rules como una tuplas como una tupla con el identificador de la membrana y las reglas 
             if len(rules) != 0: feasible_rules.append((id, rules))
 
         return feasible_rules
+    
+    
+    def get_memb_feasible_rules(self, memb_id):
+
+        applicable_rules = [r for r in self.membranes[memb_id].rules if self._is_applicable(memb_id, r)]   # recoge todas las reglas que se pueden aplicar
+        promising = []
+        for r in applicable_rules:
+            # comprueba las prioridades de las reglas
+            cond = True
+            for r1, r2 in self.membranes[memb_id].p_rules:
+                if r2 == r and self._is_applicable(memb_id, r1):
+                    cond = False
+            if cond: promising.append(r)
+
+        # comprueba que no haya conflicto entre reglas
+            # es decir que si una regla es a -> x y otra es a -> b, que solo se aplique una
+        feasible = self._solve_conflicts(memb_id, promising)
+
+        return feasible
+
+    def _solve_conflicts(self, memb_id, promising):
+        """Solve the conflicts with the rules in a rules' list
+
+        Args:
+            promising (list): combination of a possible rules
+
+        Yields:
+            list: feasible combination of rules
+        """
+
+        feasible = promising
+        conflictive = collections.defaultdict(set)
+
+        for r1 in promising:
+            for r2 in promising:
+                key = self._conflict(memb_id, r1, r2)
+                if r1 != r2 and key != None:
+                    conflictive[key].add(r1)
+                    conflictive[key].add(r2)
+                    if r1 in feasible: feasible.remove(r1)
+                    if r2 in feasible: feasible.remove(r2)
+                    break   
+
+        def is_promising(sol, rule):
+            for r in sol:
+                if self._conflict(memb_id, r, rule): return False
+            return True
+
+        def backtracking(sol):
+            # if es completo
+            if len(sol) == len(conflictive.keys()):
+                yield feasible + sol
+            else:
+                # ramificar
+                for _, rules in conflictive.items():
+                    for rule in rules:
+                        # if prometedor
+                        if is_promising(sol, rule):
+                            yield from backtracking(sol+[rule])
+
+        yield from backtracking([])
+
+
+    def _conflict(self, memb_id, rule1, rule2):
+        """Checks if two rules have conflicts like 'a'-> 'b' and 'ab' -> 'b', both need an 'a' to be apply
+
+        Args:
+            rule1 (int): first rule to compare
+            rule2 (int): second rule to compare
+
+        Returns:
+            char: first character where is the conflict
+        """
+
+        lhs1, _ = self.membranes[memb_id].rules[rule1]
+        lhs2, _ = self.membranes[memb_id].rules[rule2]
+        
+        lhs_min_len, lhs_max_len = (lhs1, lhs2) if len(lhs1) <= len(lhs2) else (lhs2, lhs1)
+
+        for a in lhs_min_len:
+            if a in lhs_max_len:
+                return a
+        return None
+
+
+    def _is_applicable(self, memb_id, rule):
+        """Checks if a rule ca be applied
+
+        Args:
+            rule (int): rule to check
+
+        Returns:
+            boolean: if the can be applied to the system or not
+        """
+
+        for obj in self.alphabet:
+            if self.membranes[memb_id].objects[obj] < self.membranes[memb_id].rules[rule][0].count(obj):
+                return False
+        for obj in self.membranes[memb_id].rules[rule][1]:
+            if obj not in self.membranes[memb_id].rhs_alphabet:
+                return False
+        return True
+
 
     def print_system(self):
         """Print system's structure
