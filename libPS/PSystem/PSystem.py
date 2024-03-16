@@ -1,30 +1,55 @@
 import random
 from .membrane import *
+import re
 
 class PSystem:
 
-    def __init__(self, V:list=[], base_struct="11", m_objects={1:''}, m_rules={1:{}}, p_rules={1:[]}, i0=1):
+
+    def __init__(self, H=None, V:list=[], base_struct="11", m_objects={0:''}, m_plasmids=None, m_rules={1:{}}, p_rules={1:[]}, i0=1):
         """PSystem class constructor.
 
         Args:
+            H (dict, optional): Plasmids' alphabet and its rules. Defaults to {}.
             V (list, optional): System's alphabet. Defaults to [].
             base_struct (str, optional): Initial system's structure. Defaults to "11".
-            m_objects (dict, optional): Membrane's objects | key:int = memb_id, value:str = memb_objects. Defaults to {1:''}.
-            m_rules (dict, optional): Membrane's rules | key:int = memb_id, value:dict = memb_rules. Defaults to {1:{}}.
+            m_objects (dict, optional): Membranes' objects | key:int = memb_id, value:str = memb_objects. Defaults to {1:''}.
+            m_rules (dict, optional): Membranes' rules | key:int = memb_id, value:dict = memb_rules. Defaults to {1:{}}.
             p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {1:[]}.
             i0 (int, optional): Output membrane. Defaults to 1.
         """
-
+        
         self.alphabet = set(V)
         self.membranes = {}
-        self.plasmids = {}
         self.outRegion = i0
+        self.enviroment = {"plasmids":set(), "objects":{}}
+
+        # preparar por si no se trabaja con plásmidos que no de ningún tipo de error
+        if H == None:
+            self.plasmids = {}
+            m_plasmids = {i: set() for i in range(int(max(base_struct)) + 1)}
+        else:
+            self.plasmids = H
+
+        # en el caso de que no le pasemos a alguna membrana los objetos, los inicializa a sin objetos
+        if len(m_objects.keys()) != int(max(base_struct)) + 1:
+            for i in range(int(max(base_struct)) + 1):
+                m_objects[i] = m_objects.get(i, '')
         
+        # en el caso de que no le pasemos a alguna membrana las reglas, las inicializa a sin reglas
+        if len(m_rules.keys()) != int(max(base_struct)):
+            for i in range(1, int(max(base_struct)) + 1):
+                m_rules[i] = m_rules.get(i, {})
+
+        # en el caso de que no le pasemos a alguna membrana las prioridades, los inicializa a sin prioridades
+        if len(p_rules.keys()) != int(max(base_struct)):
+            for i in range(1, int(max(base_struct)) + 1):
+                p_rules[i] = p_rules.get(i, [])
+
         # genera la estructura dada
-        self._gen_struct(base_struct, m_objects, m_rules, p_rules)
+        self._gen_struct(base_struct, m_objects, m_plasmids, m_rules, p_rules)
 
 
-    def _gen_struct(self, struct, m_objects, m_rules, p_rules):
+    def _gen_struct(self, struct, m_objects, m_plasmids, m_rules, p_rules):
         """Creates system structure.
 
         Args:
@@ -106,7 +131,7 @@ class PSystem:
         self.print_system()
         print("\n============================================================================================\n")
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
-        print(self.membranes[self.outRegion].objects)
+        print(sorted(self.membranes[self.outRegion].objects.items()))
 
 
     def evolve(self, feasible_rules, verbose=False):
@@ -114,6 +139,7 @@ class PSystem:
 
         Args:
             feasible_rules (tuple): System's feasible rules | (memb_id:int, rules_set:list)
+            verbose (bool, optional): if verbose = True, prints system's structure in each step. Default to False.
         """
 
         # selección de una membrana aleatoria dentro de las posibles con reglas factibles
@@ -123,13 +149,36 @@ class PSystem:
 
         if verbose: print(f'[membrane {memb_id}] rules applied : {f_rules}')
         for rule_id in f_rules:
+            
             # si una regla anterior ha disuelto la membrana no aplica más reglas en esa membrana
             if dissolve == True: break
-            # si la regla tiene una estructura sin plásmidos se aplica con esta función
-            dissolve = self._apply_rule(memb_id, rule_id, verbose)
             # si la regla tiene estructura de membranas se aplica con esta otra función
             # dissolve = self._apply_plasmids_rule()
+            lhs, rhs =  self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]
             
+            # lhs = "P1P2ac[P3b]1[d]2[e]3"
+            match = re.search(r'(?m)^((?:(?!\[).)*)(.*)', lhs)
+            if match:
+                lhs, childs_lhs = match.group(1), match.group(2)
+                # lhs = P1P2ac
+                if childs_lhs != "":
+                    match = re.sub(r'\[([^\[\]]*)\](\d*)', "", childs_lhs)
+                    match2 = re.findall(r'\[([^\[\]]*)\](\d*)', childs_lhs)
+                    if match:
+                        match = re.findall(r'\[([^\[\]]*)\](\d*)', match)
+                    else:
+                        match = []
+
+                    membs_lhs = match + match2
+                    # membs_lhs = [('P3b', '1'), ('d', '2'), ('e', '3')]
+# hay que sacar la estructura de las rhs tb para poder aplicar las reglas correctamente, debería de poder hacerse de la misma forma que con las lhs
+                    # aplicar reglas para cada una de las membranas que aparecen en la lista además de para lhs
+                else:
+                    # si la regla tiene una estructura sin plásmidos se aplica con esta función
+                    # aplicar reglas sin corchetes
+                    dissolve = self._apply_rule(memb_id, rule_id, verbose)
+            
+
             
     def _apply_rule(self, memb_id, rule_id, verbose=False):
         """Apply rule with id = rule_id in membrane with id = memb_id
@@ -174,9 +223,10 @@ class PSystem:
                             self.membranes[parent_id].objects[obj] = self.membranes[parent_id].objects.get(obj, 0) + value
                     
                     # eliminamos el hijo disuelto de la membrana padre
-                    self.membranes[parent_id].childs.remove(memb_id)
+                    self.membranes[parent_id].remove_child(memb_id)
                     # como se ha disuelto la membrana, las membranas hijas de la disuelta pasan a ser hijas de la membrana padre
-                    self.membranes[parent_id].childs = self.membranes[parent_id].childs | self.membranes[memb_id].childs
+                    for child in self.membranes[memb_id].childs:
+                        self.membranes[parent_id].add_child(child) 
                     # eliminamos la entrada a la membrana disuelta
                     self.membranes.pop(memb_id)
 
@@ -261,10 +311,12 @@ class PSystem:
 
         return feasible
 
+
     def _solve_conflicts(self, memb_id, promising):
         """Solve the conflicts with the rules in a rules' list
 
         Args:
+
             promising (list): combination of a possible rules
 
         Yields:
@@ -351,7 +403,7 @@ class PSystem:
         print(self._struct_system())
 
 
-    def _struct_system(self, struct='', id=1):
+    def _struct_system(self, struct='', id=0):
         """Recursive function that returns system's structure.
 
         Args:
@@ -361,13 +413,41 @@ class PSystem:
         Returns:
             str: Generate a more visual form of the system
         """
-        
-        objects = ''
-        for obj, n in self.membranes[id].objects.items():
-            objects += obj*n
-        struct = f"[{id} '{objects}' "
-        if self.membranes[id].childs != {}:
-            for id_child in self.membranes[id].childs:
-                struct += self._struct_system(struct, id_child)
-        struct += f']{id}'
+
+        if self.plasmids != {}:
+            if id == 0:
+                env_objects = ''
+                env_plasmids = ''
+                for obj, n in sorted(self.enviroment['objects'].items()):
+                    env_objects += obj*n
+                for p in sorted(self.enviroment['plasmids']):
+                    env_plasmids += p
+
+                struct = f" '{env_plasmids}' '{env_objects}' "
+
+                struct += self._struct_system(struct, id=1)
+            else:
+                objects = ''
+                plasmids = ''
+                for obj, n in sorted(self.membranes[id].objects.items()):
+                    objects += obj*n
+                for p in sorted(self.membranes[id].plasmids):
+                    plasmids += p
+                struct = f" [{id} '{plasmids}' '{objects}' "
+                if self.membranes[id].childs != {}:
+                    for id_child in self.membranes[id].childs:
+                        struct += self._struct_system(struct, id_child)
+                struct += f']{id}'
+        else:
+            if id != 0:
+                objects = ''
+                for obj, n in self.membranes[id].objects.items():
+                    objects += obj*n
+                struct = f"[{id} '{objects}' "
+                if self.membranes[id].childs != {}:
+                    for id_child in self.membranes[id].childs:
+                        struct += self._struct_system(struct, id_child)
+                struct += f']{id}'
+            else:
+                struct = self._struct_system(struct, 1)
         return struct
