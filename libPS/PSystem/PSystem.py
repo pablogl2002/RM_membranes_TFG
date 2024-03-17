@@ -160,6 +160,7 @@ class PSystem:
             match = re.search(r'(?m)^((?:(?!\[).)*)(.*)', lhs)
             if match:
                 lhs, childs_lhs = match.group(1), match.group(2)
+                membs_lhs = [(lhs, memb_id)]
                 # lhs = P1P2ac
                 if childs_lhs != "":
                     match = re.sub(r'\[([^\[\]]*)\](\d*)', "", childs_lhs)
@@ -169,18 +170,18 @@ class PSystem:
                     else:
                         match = []
 
-                    membs_lhs = match + match2
+                    membs_lhs += match + match2
                     # membs_lhs = [('P3b', '1'), ('d', '2'), ('e', '3')]
 # hay que sacar la estructura de las rhs tb para poder aplicar las reglas correctamente, debería de poder hacerse de la misma forma que con las lhs
                     # aplicar reglas para cada una de las membranas que aparecen en la lista además de para lhs
                 else:
                     # si la regla tiene una estructura sin plásmidos se aplica con esta función
                     # aplicar reglas sin corchetes
-                    dissolve = self._apply_rule(memb_id, rule_id, verbose)
+                    dissolve = self._apply_rule(memb_id, lhs, rhs, verbose)
             
 
-            
-    def _apply_rule(self, memb_id, rule_id, verbose=False):
+
+    def _apply_rule(self, memb_id, lhs, rhs, verbose=False):
         """Apply rule with id = rule_id in membrane with id = memb_id
 
         Args:
@@ -194,13 +195,13 @@ class PSystem:
         dissolve = False
 
         # divide en parte izquierda y derecha la regla
-        lhs, rhs = self.membranes[memb_id].rules[rule_id]
+        # lhs, rhs = self.membranes[memb_id].rules[rule_id]
 
         # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla dividido el numero de ocurrencias en la parte izquierda de la regla)
         max_possible_i = min([int(obj/lhs.count(s)) for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
 
         # printea membrana y regla
-        if verbose: print(f'memb_id: {memb_id} | n_times: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id]}')
+        # if verbose: print(f'memb_id: {memb_id} | n_times: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id]}')
 
         # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
         for obj in lhs:
