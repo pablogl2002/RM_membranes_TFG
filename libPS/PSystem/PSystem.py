@@ -133,6 +133,39 @@ class PSystem:
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
         print(sorted(self.membranes[self.outRegion].objects.items()))
 
+    def _struct_rule(self, memb_id, rule_id):
+        lhs, rhs =  self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]
+        
+        match = re.search(r'(?m)^((?:(?!\[).)*)(.*)', lhs)
+        if match:
+            lhs, childs_lhs = match.group(1), match.group(2)
+            membs_lhs = [(lhs, memb_id)]
+            if childs_lhs != "":
+                match = re.sub(r'\[([^\[\]]*)\](\d*)', "", childs_lhs)
+                match2 = re.findall(r'\[([^\[\]]*)\](\d*)', childs_lhs)
+                if match:
+                    match = re.findall(r'\[([^\[\]]*)\](\d*)', match)
+                else:
+                    match = []
+
+                membs_lhs += match + match2
+
+        match = re.search(r'(?m)^((?:(?!\[).)*)(.*)', rhs)
+        if match:
+            rhs, childs_rhs = match.group(1), match.group(2)
+            membs_rhs = [(rhs, memb_id)]
+            
+            if childs_rhs != "":
+                match = re.sub(r'\[([^\[\]]*)\](\d*)', "", childs_rhs)
+                match2 = re.findall(r'\[([^\[\]]*)\](\d*)', childs_rhs)
+                if match:
+                    match = re.findall(r'\[([^\[\]]*)\](\d*)', match)
+                else:
+                    match = []
+
+                membs_rhs += match + match2
+
+        return sorted(membs_lhs, key=lambda x: x[1]), sorted(membs_rhs, key=lambda x: x[1])
 
     def evolve(self, feasible_rules, verbose=False):
         """Makes an iteration on the system choosing a random membrane to apply its rules.
@@ -149,39 +182,19 @@ class PSystem:
 
         if verbose: print(f'[membrane {memb_id}] rules applied : {f_rules}')
         for rule_id in f_rules:
-            
             # si una regla anterior ha disuelto la membrana no aplica más reglas en esa membrana
             if dissolve == True: break
-            # si la regla tiene estructura de membranas se aplica con esta otra función
-            # dissolve = self._apply_plasmids_rule()
-            lhs, rhs =  self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]
+
+            membs_lhs, membs_rhs = self._struct_rule(memb_id, rule_id)             
+            dissolve = self._apply_rule(membs_lhs, membs_rhs, verbose)
             
-            # lhs = "P1P2ac[P3b]1[d]2[e]3"
-            match = re.search(r'(?m)^((?:(?!\[).)*)(.*)', lhs)
-            if match:
-                lhs, childs_lhs = match.group(1), match.group(2)
-                membs_lhs = [(lhs, memb_id)]
-                # lhs = P1P2ac
-                if childs_lhs != "":
-                    match = re.sub(r'\[([^\[\]]*)\](\d*)', "", childs_lhs)
-                    match2 = re.findall(r'\[([^\[\]]*)\](\d*)', childs_lhs)
-                    if match:
-                        match = re.findall(r'\[([^\[\]]*)\](\d*)', match)
-                    else:
-                        match = []
+    def _max_possible_iter(self, membs_lhs):
+        mins_iters = []
+        for lhs, memb_id in membs_lhs:
+            mins_iters.append(min([int(obj/lhs.count(s)) for s,obj in self.membranes[int(memb_id)].objects.items() if s in lhs]))
+        return min(mins_iters)
 
-                    membs_lhs += match + match2
-                    # membs_lhs = [('P3b', '1'), ('d', '2'), ('e', '3')]
-# hay que sacar la estructura de las rhs tb para poder aplicar las reglas correctamente, debería de poder hacerse de la misma forma que con las lhs
-                    # aplicar reglas para cada una de las membranas que aparecen en la lista además de para lhs
-                else:
-                    # si la regla tiene una estructura sin plásmidos se aplica con esta función
-                    # aplicar reglas sin corchetes
-                    dissolve = self._apply_rule(memb_id, lhs, rhs, verbose)
-            
-
-
-    def _apply_rule(self, memb_id, lhs, rhs, verbose=False):
+    def _apply_rule(self, membs_lhs, membs_rhs, verbose=False):
         """Apply rule with id = rule_id in membrane with id = memb_id
 
         Args:
@@ -192,83 +205,65 @@ class PSystem:
         Returns:
             bool: returns if the rule dissolves the membrane
         """
-        dissolve = False
-
-        # divide en parte izquierda y derecha la regla
-        # lhs, rhs = self.membranes[memb_id].rules[rule_id]
-
         # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla dividido el numero de ocurrencias en la parte izquierda de la regla)
-        max_possible_i = min([int(obj/lhs.count(s)) for s,obj in self.membranes[memb_id].objects.items() if s in lhs])
+        max_possible_i = self._max_possible_iter(membs_lhs)
 
         # printea membrana y regla
         # if verbose: print(f'memb_id: {memb_id} | n_times: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id]}')
 
-        # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
-        for obj in lhs:
-            self.membranes[memb_id].objects[obj] = self.membranes[memb_id].objects[obj] - max_possible_i
-        
-        # de la membrana elegida sacamos el id de la membrana padre 
-        parent_id = self.membranes[memb_id].parent
+        for lhs, memb_id in membs_lhs:        
+            # recorremos la parte izquierda y se quitan los objetos recorridos del diccionario de objectos de la membrana
+            for obj in lhs:
+                self.membranes[memb_id].objects[obj] = self.membranes[memb_id].objects[obj] - max_possible_i
+            
+            # de la membrana elegida sacamos el id de la membrana padre 
+            parent_id = self.membranes[memb_id].parent
 
-        # recorremos la parte derecha de la regla           
-        for i, _ in enumerate(rhs):
-            # si no es un digito
-            if not(rhs[i].isdigit()):
-                # en el caso de que sea un punto disolvemos membrana
-                if rhs[i] == '.':   # disolver
-                    # si existe membrana padre  
-                    if parent_id != None:
-                        # añade los objetos de la membrana a disolver en la membrana padre
-                        for obj in self.alphabet:
-                            value = self.membranes[memb_id].objects[obj]
-                            self.membranes[parent_id].objects[obj] = self.membranes[parent_id].objects.get(obj, 0) + value
-                    
-                    # eliminamos el hijo disuelto de la membrana padre
-                    self.membranes[parent_id].remove_child(memb_id)
-                    # como se ha disuelto la membrana, las membranas hijas de la disuelta pasan a ser hijas de la membrana padre
-                    for child in self.membranes[memb_id].childs:
-                        self.membranes[parent_id].add_child(child) 
-                    # eliminamos la entrada a la membrana disuelta
-                    self.membranes.pop(memb_id)
 
-                    dissolve = True
-
-                # en el caso de que no sea el último objeto de la regla y el siguiente sea un dígito
-                elif i+1 != len(rhs) and rhs[i+1].isdigit():  # in to child | out to parent    
-                    id = int(rhs[i+1])  # membrana hija a la que se introducirán los objetos o bien 0 si out
-                    # si se encuentra el id entre los id de las membranas hijas
-                    if id in self.membranes[memb_id].childs:
-                        # añade objeto a la membrana hija
-                        self.membranes[id].objects[rhs[i]] = self.membranes[id].objects[rhs[i]] + max_possible_i
-                    # si es 0 -> out
-                    elif id == 0:
-                        # si tiene padre la membrana | si no tiene padre no se añade en ningún sitio
+        for rhs, memb_id in membs_rhs:
+            memb_id = memb_id
+            dissolve = False
+            # recorremos la parte derecha de la regla           
+            for i, _ in enumerate(rhs):
+                # si no es un digito
+                if not(rhs[i].isdigit()):
+                    # en el caso de que sea un punto disolvemos membrana
+                    if rhs[i] == '.':   # disolver
+                        # si existe membrana padre  
                         if parent_id != None:
-                            # saca a la membrana padre el objeto
-                            self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + max_possible_i
+                            # añade los objetos de la membrana a disolver en la membrana padre
+                            for obj in self.alphabet:
+                                value = self.membranes[memb_id].objects[obj]
+                                self.membranes[parent_id].objects[obj] = self.membranes[parent_id].objects.get(obj, 0) + value
+                        
+                        # eliminamos el hijo disuelto de la membrana padre
+                        self.membranes[parent_id].remove_child(memb_id)
+                        # como se ha disuelto la membrana, las membranas hijas de la disuelta pasan a ser hijas de la membrana padre
+                        for child in self.membranes[memb_id].childs:
+                            self.membranes[parent_id].add_child(child) 
+                        # eliminamos la entrada a la membrana disuelta
+                        self.membranes.pop(memb_id)
 
-                # caso de adicion a la propia membrana
-                else:
-                    # añade objeto a la membrana
-                    self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + max_possible_i
-        
-        return dissolve
+                        dissolve = True
 
+                    # en el caso de que no sea el último objeto de la regla y el siguiente sea un dígito
+                    elif i+1 != len(rhs) and rhs[i+1].isdigit():  # in to child | out to parent    
+                        id = int(rhs[i+1])  # membrana hija a la que se introducirán los objetos o bien 0 si out
+                        # si se encuentra el id entre los id de las membranas hijas
+                        if id in self.membranes[memb_id].childs:
+                            # añade objeto a la membrana hija
+                            self.membranes[id].objects[rhs[i]] = self.membranes[id].objects[rhs[i]] + max_possible_i
+                        # si es 0 -> out
+                        elif id == 0:
+                            # si tiene padre la membrana | si no tiene padre no se añade en ningún sitio
+                            if parent_id != None:
+                                # saca a la membrana padre el objeto
+                                self.membranes[parent_id].objects[rhs[i]] = self.membranes[parent_id].objects[rhs[i]] + max_possible_i
 
-    def _apply_plasmids_rule(self, memb_id, rule_id, verbose=False):
-        """Apply rule with id = rule_id in membrane with id = memb_id
-
-        Args:
-            memb_id (int): membrane's id
-            rule_id (str): rule's id to be applied
-            verbose (bool, optional): if verbose = True, prints system's structure in each step. Default to False.
-
-        Returns:
-            bool: returns if the rule dissolves the membrane
-        """
-        dissolve = False
-
-
+                    # caso de adicion a la propia membrana
+                    else:
+                        # añade objeto a la membrana
+                        self.membranes[memb_id].objects[rhs[i]] = self.membranes[memb_id].objects[rhs[i]] + max_possible_i
 
         return dissolve
         
