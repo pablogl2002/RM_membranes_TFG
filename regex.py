@@ -40,13 +40,33 @@ def expresion(lhs, rhs):
 
             membs_rhs += match + match2
         print("membs_rhs", membs_rhs)
-        
 
-print("lhs1, rhs1 ===>")
-expresion(lhs1, rhs1)
+        return membs_lhs, membs_rhs
 
-print("lhs2, rhs2 ===>")
-expresion(lhs2, rhs2)
+def plasmids(rhs):
+    # comprueba si la parte derecha de la regla tiene una estructura con plasmidos ej. "[P1P2a2b0c]" | "P1P2a2b0c"
+    match = re.findall(r"P\d+", rhs)
+    if match != []:
+        rhs = re.sub(r"P\d+", "", rhs)  # obtiene el string de objetos
+        plasmids_rhs = match
+    else: 
+        plasmids_rhs = []
 
-print("lhs3, rhs3 ===>")
-expresion(lhs3, rhs3)
+    print(plasmids_rhs)
+    print(rhs)
+
+
+# print("lhs1, rhs1 ===>")
+_, membs_rhs = expresion(lhs1, rhs1)
+
+for rhs, memb_id in membs_rhs:
+    print(f"===> {memb_id}")
+    plasmids(rhs)
+
+# print("lhs2, rhs2 ===>")
+# expresion(lhs2, rhs2)
+
+# print("lhs3, rhs3 ===>")
+# expresion(lhs3, rhs3)
+
+

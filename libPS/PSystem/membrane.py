@@ -2,7 +2,7 @@ import collections
 
 class Membrane:
 
-    def __init__(self, V, id:int, parent:int=None, objects:str='', rules={}, p_rules={}):
+    def __init__(self, V, id:int, parent:int=None, objects:str='', plasmids=[], rules={}, p_rules={}):
         """Membrane class constructor.
 
         Args:
@@ -20,7 +20,7 @@ class Membrane:
         self.childs = set()             # childs' ids set list
         self.rules = rules              # rules' dict
         self.p_rules = p_rules          # rules' priority dict
-        self.plasmids = set()           # plasmids' set list
+        self.plasmids = set(plasmids)   # plasmids' set list
         self.objects = {}               # membrane object's dict
         self.rhs_alphabet = V.copy()    # rhs rules' alphabet
 
