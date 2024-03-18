@@ -328,10 +328,10 @@ class PSystem:
 
         for r1 in promising:
             for r2 in promising:
-                key = self._conflict(memb_id, r1, r2)
+                key, memb_id_2 = self._conflict(memb_id, r1, r2)
                 if r1 != r2 and key != None:
-                    conflictive[key].add(r1)
-                    conflictive[key].add(r2)
+                    conflictive[(key, memb_id_2)].add(r1)
+                    conflictive[(key, memb_id_2)].add(r2)
                     if r1 in feasible: feasible.remove(r1)
                     if r2 in feasible: feasible.remove(r2)
                     break   
@@ -367,15 +367,21 @@ class PSystem:
             char: first character where is the conflict
         """
 
-        lhs1, _ = self.membranes[memb_id].rules[rule1]
-        lhs2, _ = self.membranes[memb_id].rules[rule2]
-        
-        lhs_min_len, lhs_max_len = (lhs1, lhs2) if len(lhs1) <= len(lhs2) else (lhs2, lhs1)
+        # lhs1, _ = self.membranes[memb_id].rules[rule1]
+        membs_lhs1, _ = self._struct_rule(memb_id, rule1)
+        # lhs2, _ = self.membranes[memb_id].rules[rule2]
+        membs_lhs2, _ = self._struct_rule(memb_id, rule2)
 
-        for a in lhs_min_len:
-            if a in lhs_max_len:
-                return a
-        return None
+        for lhs1, memb_id_1 in membs_lhs1:
+            for lhs2, memb_id_2 in membs_lhs2:
+                if memb_id_1 == memb_id_2:
+                    lhs_min_len, lhs_max_len = (lhs1, lhs2) if len(lhs1) <= len(lhs2) else (lhs2, lhs1)
+
+                    for a in lhs_min_len:
+                        if a in lhs_max_len:
+                            return a, memb_id_1
+        
+        return None, None
 
 
     def _is_applicable(self, memb_id, rule_id):
