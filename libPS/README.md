@@ -6,37 +6,45 @@ Library that allows you to create P Systems and evolve them.
 
 ### How to create a PSystem object?
 
-ps = PSystem(V, base_struct, m_objects, m_rules, p_rules, i0)
+ps = PSystem(H, V, base_struct, m_objects, m_plasmids, m_rules, p_rules, i0)
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
+| `H` | `dict` | Plasmids' alphabet and its rules. Defaults to { } |
 | `V` | `list` | System's alphabet. Defaults to [ ] |
 | `base_struct` | `str` | Initial system's structure. Defaults to "11" |
 | `m_objects` | `dict` | Membrane's objects. Defaults to { 1 : '' } |
+| `m_plasmids` | `dict` | Membranes' plasmids. Defaults to None |
 | `m_rules` | `dict` | Membrane's rules. Defaults to { 1 : { } } |
 | `p_rules` | `dict` | Rules priority in each membrane. Defaults to { 1: [ ] }|
 | `i0` | `int` | Output membrane. Defaults to 1 |
 
 ### ps.steps(n, verbose=False)
-Evolve the system _n_ steps. If verbose is True, prints system's structure in each step
+Evolve the system _n_ steps. If verbose is True, prints system's structure in each step.
 
 ### ps.while_evolve(verbose=False)
-Evolve the system until finish all possible iterations. If verbose is True, prints system's structure in each step
+Evolve the system until finish all possible iterations. If verbose is True, prints system's structure in each step.
 
 ### ps.evolve(feasible_rules, verbose=False)
 Evolve the system choosing a random membrane from feasible_rules list whose items are a tuple of membrane's id and their rules to apply. If verbose is True, prints the membrane where the rules are being applied, the rules applied and the number of times each rule has been applied.
 
 ### ps.get_fesible_rules()
-Get feasible rules from all the membranes in the current state 
+Get feasible rules from all the membranes in the current state.
+
+### ps.get_memb_feasible_rules(memb_id)
+Get a combination of rules that can be applied all at once in the membrane with id *memb_id*.
+
+### ps.accessible_plasmids(memb_id)
+Get the plasmids that could go into the membrane with id *memb_id*.
 
 ### ps.print_system()
-Print system's structure
+Print system's structure.
 
 ## Membrane class and its functions
 
 ### How to create a membrane
 
-memb = Membrane(V, id, parent, objects, rules, p_rules)
+memb = Membrane(V, id, parent, objects, plasmids, rules, p_rules)
 
 | Parameter | Type     | Description                |
 | :-------- | :------- | :------------------------- |
@@ -44,20 +52,19 @@ memb = Membrane(V, id, parent, objects, rules, p_rules)
 | `id` | `int` | Membrane's id |
 | `parent` | `int` | Parent Membrane's id. Defaults to None |
 | `objects` | `str` | Membrane's objects. Defaults to '' |
+| `plasmids` | `list` | Membrane's plasmids. Default to [ ]. |
 | `rules` | `dict` | Membrane's rules. Defaults to {} |
 | `p_rules` | `dict` | Rules priority in membrane. Defaults to {} |
 
 ### memb.add_child(child_id)
-Add child with id *child_id* to the membrane *memb*
+Add child with id *child_id* to the membrane *memb*.
 
-### memb.add_plasmids(plasmids)
-Add all plasmid in *plasmids:list* to the membrane (not working, because plasmids not implemented yet)
+### memb.remove_child(child_id)
+Remove child  with id *child_id* from the membrane *memb*.
 
 ### memb.add_objects(objects)
 Add all the objects in *objects:string* to the membrane *memb*
 
-### memb.get_feasible_rules()
-Get a combination of rules that can be applied all at once in the membrane
 
 ## Examples
 

@@ -10,6 +10,7 @@ class Membrane:
             id (int): Membrane's id
             parent (int, optional): Parent Membrane's id. Defaults to None.
             objects (str, optional): Membrane's objects. Defaults to ''.
+            plasmids (list, optional): Membrane's plasmids. Default to [].
             rules (dict, optional): Membrane's rules | key: rule_id, value:list = tuple (lhs, rhs). Defaults to {}.
             p_rules (dict, optional): Rules priority in membrane. Defaults to {}.
         """

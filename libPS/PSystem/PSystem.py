@@ -13,7 +13,7 @@ class PSystem:
             V (list, optional): System's alphabet. Defaults to [].
             base_struct (str, optional): Initial system's structure. Defaults to "11".
             m_objects (dict, optional): Membranes' objects | key:int = memb_id, value:str = memb_objects. Defaults to {1:''}.
-            m_plasmids (_type_, optional): _description_. Defaults to None.
+            m_plasmids (dict, optional): Membranes' plasmids. Defaults to None.
             m_rules (dict, optional): Membranes' rules | key:int = memb_id, value:dict = memb_rules. Defaults to {1:{}}.
             p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {1:[]}.
             i0 (int, optional): Output membrane. Defaults to 1.
