@@ -30,6 +30,11 @@ class PSystem:
         else:
             self.plasmids = H
 
+        # en el caso de que no le pasemos a alguna membrana los plasmidos, los inicializa a sin plásmidos
+        if len(m_plasmids.keys()) != int(max(base_struct)) + 1:
+            for i in range(int(max(base_struct)) + 1):
+                m_plasmids[i] = m_plasmids.get(i, set())
+
         # en el caso de que no le pasemos a alguna membrana los objetos, los inicializa a sin objetos
         if len(m_objects.keys()) != int(max(base_struct)) + 1:
             for i in range(int(max(base_struct)) + 1):
@@ -58,16 +63,6 @@ class PSystem:
             m_rules (dict): Membrane's rules | key:int = memb_id, value:dict = memb_rules
             p_rules (dict): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority
         """
-
-        # preparacion del entorno
-        # self.enviroment['plasmids'] = m_plasmids[0] # añadir al entorno sus plásmidos
-        # self.enviroment['rules'] = m_rules[0] # añadir al entorno sus reglas
-
-        # añadir al entorno sus objetos 
-        # objects = m_objects[0]
-        # for obj in self.alphabet:
-        #     count = objects.count(obj)
-        #     self.enviroment['objects'][obj] = self.enviroment['objects'].get(obj, 0) + count
 
         self.membranes[0] = self.membranes.get(0, Membrane(V=self.alphabet, id=0, parent=None, objects=m_objects[0], plasmids=m_plasmids[0], rules=m_rules[0], p_rules=p_rules[0]))
 
@@ -198,21 +193,24 @@ class PSystem:
         """
 
         # selección de una membrana aleatoria dentro de las posibles con reglas factibles
-        memb_id, f_rules = random.choice(feasible_rules)
+        for memb_id, f_rules in feasible_rules:
+            dissolve = False
 
-        dissolve = False
+            if verbose: print(f'[membrane {memb_id}] rules applied : {f_rules}')
+            for rule_id in f_rules:
+                # si una regla anterior ha disuelto la membrana no aplica más reglas en esa membrana
+                if dissolve == True: break
 
-        if verbose: print(f'[membrane {memb_id}] rules applied : {f_rules}')
-        for rule_id in f_rules:
-            # si una regla anterior ha disuelto la membrana no aplica más reglas en esa membrana
-            if dissolve == True: break
+                membs_lhs, membs_rhs = self._struct_rule(memb_id, rule_id)       
+                # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla dividido el numero de ocurrencias en la parte izquierda de la regla)
+                max_possible_i = self._max_possible_iter(membs_lhs)
 
-            membs_lhs, membs_rhs = self._struct_rule(memb_id, rule_id)             
-            dissolve = self._apply_rule(membs_lhs, membs_rhs, verbose)
+                # printea membrana y regla
+                if verbose: print(f"memb_id: {memb_id} | n_times: {max_possible_i} -> rule '{rule_id}':  {self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]}")
+                dissolve = self._apply_rule(membs_lhs, membs_rhs, max_possible_i)
             
 
     def _max_possible_iter(self, membs_lhs):
-            
         max_iters = []
         for lhs, memb_id in membs_lhs:
             match = re.findall(r"P\d+", lhs)
@@ -226,7 +224,7 @@ class PSystem:
         return min(max_iters)
 
 
-    def _apply_rule(self, membs_lhs, membs_rhs, verbose=False):
+    def _apply_rule(self, membs_lhs, membs_rhs, max_possible_i):
         """Apply rule with id = rule_id in membrane with id = memb_id
 
         Args:
@@ -237,11 +235,6 @@ class PSystem:
         Returns:
             bool: returns if the rule dissolves the membrane
         """
-        # máximo numero de iteraciones posibles para la regla (minimo numero de objetos en la membrana a los que afecta la regla dividido el numero de ocurrencias en la parte izquierda de la regla)
-        max_possible_i = self._max_possible_iter(membs_lhs)
-
-        # printea membrana y regla
-        # if verbose: print(f'memb_id: {memb_id} | n_times: {max_possible_i} -> rule: {self.membranes[memb_id].rules[rule_id]}')
 
         for lhs, memb_id in membs_lhs:        
 
