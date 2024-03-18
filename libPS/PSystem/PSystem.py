@@ -13,6 +13,7 @@ class PSystem:
             V (list, optional): System's alphabet. Defaults to [].
             base_struct (str, optional): Initial system's structure. Defaults to "11".
             m_objects (dict, optional): Membranes' objects | key:int = memb_id, value:str = memb_objects. Defaults to {1:''}.
+            m_plasmids (_type_, optional): _description_. Defaults to None.
             m_rules (dict, optional): Membranes' rules | key:int = memb_id, value:dict = memb_rules. Defaults to {1:{}}.
             p_rules (dict, optional): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority. Defaults to {1:[]}.
             i0 (int, optional): Output membrane. Defaults to 1.
@@ -60,9 +61,11 @@ class PSystem:
         Args:
             struct (str): Initial structure
             m_objects (dict): Membrane's objects | key:int = memb_id, value:str = memb_objects
+            m_plasmids (dict): Membrane's plasmids | key:int = memb_id, value:set = plasmids set
             m_rules (dict): Membrane's rules | key:int = memb_id, value:dict = memb_rules
             p_rules (dict): Rules priority in each membrane | key:int = memb_id, value:list = memb_priority
         """
+
 
         self.membranes[0] = self.membranes.get(0, Membrane(V=self.alphabet, id=0, parent=None, objects=m_objects[0], plasmids=m_plasmids[0], rules=m_rules[0], p_rules=p_rules[0]))
 
@@ -142,6 +145,17 @@ class PSystem:
 
 
     def _struct_rule(self, memb_id, rule_id):
+        """Divides the rule into left hand side and right hand side, gives format to the rule to be feasible to apply in the system
+
+        Args:
+            memb_id (int): Membrane's id
+            rule_id (int|str): Rule's id
+
+        Returns:
+            membs_lhs: List of the parts of the lhs rule divided by membranes
+            membs_rhs: List of the parts of the rhs rule divided by membranes
+        """
+        
         lhs, rhs =  self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]
         
         match = re.search(r'(?m)^((?:(?!\[).)*)(.*)', lhs)
@@ -211,6 +225,14 @@ class PSystem:
             
 
     def _max_possible_iter(self, membs_lhs):
+        """Return the maximum number of possible interations for a given rule. It only needs the left hand side of the rule to check it.
+
+        Args:
+            membs_lhs (list): List of the parts of the lhs rule divided by membranes
+
+        Returns:
+            int: Maximum number of possible interations
+        """
         max_iters = []
         for lhs, memb_id in membs_lhs:
             match = re.findall(r"P\d+", lhs)
@@ -225,12 +247,12 @@ class PSystem:
 
 
     def _apply_rule(self, membs_lhs, membs_rhs, max_possible_i):
-        """Apply rule with id = rule_id in membrane with id = memb_id
+        """Apply rule max_possible_i iterations.
 
         Args:
-            memb_id (int): membrane's id
-            rule_id (int): rule's id to be applied
-            verbose (bool, optional): if verbose = True, prints system's structure in each step. Default to False.
+            membs_lhs: List of the parts of the lhs rule divided by membranes
+            membs_rhs: List of the parts of the rhs rule divided by membranes
+            max_possible_i (int): Maximum number of possible interations
 
         Returns:
             bool: returns if the rule dissolves the membrane
@@ -341,7 +363,14 @@ class PSystem:
     
     
     def get_memb_feasible_rules(self, memb_id):
+        """Get feasible rules from membrane with id = memb_id
 
+        Args:
+            memb_id (int): Membrane's id
+
+        Returns:
+            list: List of feasible rules from membrane with id = memb_id
+        """
         if memb_id == 0:
             rules = self.membranes[memb_id].rules
         else:
@@ -370,11 +399,11 @@ class PSystem:
         """Solve the conflicts with the rules in a rules' list
 
         Args:
-
+            memb_id (int): Membrane's id
             promising (list): combination of a possible rules
 
         Yields:
-            list: feasible combination of rules
+            list: feasible combination of rules for membrane with id = memb_id
         """
 
         feasible = promising
@@ -414,11 +443,13 @@ class PSystem:
         """Checks if two rules have conflicts like 'a'-> 'b' and 'ab' -> 'b', both need an 'a' to be apply
 
         Args:
+            memb_id (int): Membrane's id
             rule1 (int): first rule to compare
             rule2 (int): second rule to compare
 
         Returns:
             char: first character where is the conflict
+            int: membrane's id where the character conflicts
         """
 
         # lhs1, _ = self.membranes[memb_id].rules[rule1]
@@ -442,7 +473,8 @@ class PSystem:
         """Checks if a rule ca be applied
 
         Args:
-            rule (int): rule to check
+            memb_id (int): Membrane's id  
+            rule_id (int): rule to check
 
         Returns:
             boolean: if the can be applied to the system or not
@@ -503,18 +535,24 @@ class PSystem:
         return True
 
     def accessible_plasmids(self, memb_id):
-        if memb_id != 0:
-            parent_id = self.membranes[memb_id].parent
-            if parent_id != None:
-                accessible_plasmids = self.membranes[parent_id].plasmids
-                
-            for child in self.membranes[memb_id].childs:
-                accessible_plasmids.update(self.membranes[child].plasmids)
+        """Return the plasmids that could go into the membrane with id = memb_id.
 
-            return accessible_plasmids
-        else:
-            for child in self.membranes[1].childs:
-                accessible_plasmids.update(self.membranes[1].plasmids)
+        Args:
+            memb_id (int): Membrane's id  
+
+        Returns:
+            set: Set of the plasmids that could go into the membrane memb_id
+        """
+
+        parent_id = self.membranes[memb_id].parent
+        if parent_id != None:
+            accessible_plasmids = self.membranes[parent_id].plasmids
+            
+        for child in self.membranes[memb_id].childs:
+            accessible_plasmids.update(self.membranes[child].plasmids)
+
+                
+        return accessible_plasmids
 
     def print_system(self):
         """Print system's structure
