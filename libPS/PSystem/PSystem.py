@@ -133,6 +133,7 @@ class PSystem:
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
         print(sorted(self.membranes[self.outRegion].objects.items()))
 
+
     def _struct_rule(self, memb_id, rule_id):
         lhs, rhs =  self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]
         
@@ -167,6 +168,7 @@ class PSystem:
 
         return sorted(membs_lhs, key=lambda x: x[1]), sorted(membs_rhs, key=lambda x: x[1])
 
+
     def evolve(self, feasible_rules, verbose=False):
         """Makes an iteration on the system choosing a random membrane to apply its rules.
 
@@ -188,11 +190,13 @@ class PSystem:
             membs_lhs, membs_rhs = self._struct_rule(memb_id, rule_id)             
             dissolve = self._apply_rule(membs_lhs, membs_rhs, verbose)
             
+
     def _max_possible_iter(self, membs_lhs):
         mins_iters = []
         for lhs, memb_id in membs_lhs:
             mins_iters.append(min([int(obj/lhs.count(s)) for s,obj in self.membranes[int(memb_id)].objects.items() if s in lhs]))
         return min(mins_iters)
+
 
     def _apply_rule(self, membs_lhs, membs_rhs, verbose=False):
         """Apply rule with id = rule_id in membrane with id = memb_id
@@ -374,7 +378,7 @@ class PSystem:
         return None
 
 
-    def _is_applicable(self, memb_id, rule):
+    def _is_applicable(self, memb_id, rule_id):
         """Checks if a rule ca be applied
 
         Args:
@@ -384,14 +388,81 @@ class PSystem:
             boolean: if the can be applied to the system or not
         """
 
-        for obj in self.alphabet:
-            if self.membranes[memb_id].objects[obj] < self.membranes[memb_id].rules[rule][0].count(obj):
-                return False
-        for obj in self.membranes[memb_id].rules[rule][1]:
-            if obj not in self.membranes[memb_id].rhs_alphabet:
-                return False
+        membs_lhs, membs_rhs = self._struct_rule(memb_id, rule_id)
+        
+        for lhs, memb_id in membs_lhs:
+            # comprueba si la parte izquierda de la regla tiene una estructura con plasmidos ej. "P1P2[abc]"
+            match = re.search(r'(.*)\[(.*)\]', lhs)
+            if match:
+                plasmids_out_lhs, lhs = match.group(1), match.group(2)  # si tiene la estructura dividimos en plasmidos y objetos
+                if plasmids_out_lhs == "" : 
+                    plasmids_out_lhs = []
+                else:
+                    plasmids_out_lhs = re.findall(r"P\d+", plasmids_out_lhs)
+                match = re.findall(r"P\d+", lhs)
+                if match != []:
+                    lhs = re.sub(r"P\d+", "", lhs)  # obtiene el string de objetos
+                    if lhs != '' and lhs[0] == "["  and lhs[-1] == "]":
+                        lhs = lhs[1:-1]     # si estaba entre corchetes los quita
+                    plasmids_in_lhs = match
+                else:
+                    plasmids_in_lhs = []
+            else:
+                plasmids_out_lhs = []
+                plasmids_in_lhs = []
+            
+            # para cada plasmido en la regla comprueba si se encuentra en los plásmidos que pueden entrar a la membrana
+            for p in plasmids_in_lhs:
+                if p not in self.plasmids_in:
+                    return False
+            for p in plasmids_out_lhs:
+                if p not in self.accessible_plasmids:
+                    return False
+            
+            # para cada objeto de la parte izquierda comprueba que tiene suficientes como para sustituirlos
+            for obj in self.alphabet:
+                if self.membranes[memb_id].objects[obj] < lhs.count(obj):
+                    return False
+                
+        for rhs, memb_id in membs_rhs:
+
+            match = re.search(r'(.*)\[(.*)\]', rhs)
+            if match:
+                plasmids_out_rhs, rhs = match.group(1), match.group(2)
+                if plasmids_out_rhs == "" : plasmids_out_rhs = []
+            else: 
+                plasmids_out_rhs = []
+
+            # comprueba si la parte derecha de la regla tiene una estructura con plasmidos ej. "[P1P2a2b0c]" | "P1P2a2b0c"
+            match = re.findall(r"P\d+", rhs)
+            if match != []:
+                rhs = re.sub(r"P\d+", "", rhs)  # obtiene el string de objetos
+                if rhs != '' and rhs[0] == "["  and rhs[-1] == "]":
+                    rhs = rhs[1:-1]     # si estaba entre corchetes los quita
+                plasmids_in_rhs = match
+            else: 
+                plasmids_in_rhs = []
+
+            for p in plasmids_in_rhs:
+                if p not in self.accessible_plasmids(memb_id) and p not in self.membranes[memb_id].plasmids:
+                    return False
+            for p in plasmids_out_rhs:
+                if p not in self.accessible_plasmids(memb_id) and p not in self.membranes[memb_id].plasmids:
+                    return False
+
+            # para los objetos de la parte derecha comprueba que sean del alfabeto
+            for obj in rhs:
+                if obj not in self.membranes[memb_id].rhs_alphabet:
+                    return False
+
         return True
 
+    def accessible_plasmids(self, memb_id):
+        accessible_plasmids = self.membranes[self.membranes[memb_id].parent].plasmids
+        for child in self.membranes[memb_id].childs:
+            accessible_plasmids.update(self.membranes[child].plasmids)
+
+        return accessible_plasmids
 
     def print_system(self):
         """Print system's structure
