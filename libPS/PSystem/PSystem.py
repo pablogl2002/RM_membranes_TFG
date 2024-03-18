@@ -158,6 +158,7 @@ class PSystem:
         
         lhs, rhs =  self.membranes[memb_id].rules[rule_id] if type(rule_id) == int else self.plasmids[rule_id[:-1]][rule_id]
         
+        # divide la parte izquierda por membranas si hay una regla de multiple membrana ej. "P1P2ac[P3b[d]2[e]3]1"
         match = re.search(r'(?m)^((?:(?!\[).)*)(.*)', lhs)
         if match:
             lhs, childs_lhs = match.group(1), match.group(2)
@@ -176,6 +177,7 @@ class PSystem:
 
                 membs_lhs += aux
 
+        # divide la parte derecha por membranas si hay una regla de multiple membrana ej. "P2P3b[P1ac[e]2[d]3]1"
         match = re.search(r'(?m)^((?:(?!\[).)*)(.*)', rhs)
         if match:
             rhs, childs_rhs = match.group(1), match.group(2)
@@ -210,7 +212,7 @@ class PSystem:
         for memb_id, f_rules in feasible_rules:
             dissolve = False
 
-            if verbose: print(f'[membrane {memb_id}] rules applied : {f_rules}')
+            # if verbose: print(f'[membrane {memb_id}] rules applied : {f_rules}')
             for rule_id in f_rules:
                 # si una regla anterior ha disuelto la membrana no aplica más reglas en esa membrana
                 if dissolve == True: break
