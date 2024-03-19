@@ -3,14 +3,15 @@ from libPS.PSystem import *
 def resta_aritmetica(n,m):
     alphabet = ['a','b','c','p','q']
     plasmids = {
-              "P1":{"P11":('a','a0')} ,
-              "P2":{"P21":('ab','c0')}
-               }
+        "P1":{"P11":('a','a0')} ,
+        "P2":{"P21":('ab','c0')}
+    }
     struct = '122331'
-    m_objects = {0:'',
-                 1:'pq',
-                 2:'a'*n,
-                 3:'b'*m}
+    m_objects = {
+        1:'pq',
+        2:'a'*n,
+        3:'b'*m
+    }
     
     m_plasmids = {
         0: set(['P1','P2'])
@@ -40,16 +41,16 @@ def resta_aritmetica(n,m):
 def producto_aritmetico(n, m):
     alphabet = ['a','b','p','x','q','r','t','s']
     plasmids = {
-              "P1":{"P11":('ba','b')},
-              "P2":{"P21":('a',"ab0")},
-               }
+        "P1":{"P11":('ba','b')},
+        "P2":{"P21":('a',"ab0")},
+    }
     struct = '122331'
     m_objects = {
         1:'p',
         2:'b' + 'a'*n,
         3:'b' + 'a'*m,
     }
-    
+   
     m_plasmids = {
         0: set(['P1','P2']),
     }

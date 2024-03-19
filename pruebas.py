@@ -18,19 +18,30 @@ def k_divides_n(n,k):
 
     alphabet = ['a','c','x','d']
     struct = '122331'
-    m_objects = {1:'',
-                2:'a'*n+'c'*k+'d',
-                3:'a'}
-    r_1 = {1:('dcx','a3')}
-    r_2 = {1:('ac','x'),
+    m_objects = {
+        2:'a'*n+'c'*k+'d',
+        3:'a'
+    }
+
+    r_1 = {
+        1:('dcx','a3')
+    }
+    
+    r_2 = {
+        1:('ac','x'),
         2:('ax','c'),
-        3:('d','d.')}
-    m_rules = {1:r_1,
-            2:r_2,
-            3:{}}
-    p_rules = {1 : [],
-            2 : [(1,3),(2,3)],
-            3 : []}
+        3:('d','d.')
+    }
+    
+    m_rules = {
+        1:r_1,
+        2:r_2,
+    }
+    
+    p_rules = {
+        2 : [(1,3),(2,3)],
+    }
+
     i0 = 3
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
@@ -67,35 +78,37 @@ def problem_nsquared():
 
     alphabet = ['a','b','x','c','f']
     struct = '12334421'
-    m_objects = {1:'',
-                2:'',
-                3:'af',
-                4:''}
+    m_objects = {
+        3:'af',
+    }
 
-    r_2 = {1:('x','b'),
+    r_2 = {
+        1:('x','b'),
         2:('b','bc4'),
         3:('ff','f'),
-        4:('f','a.')}
+        4:('f','a.')
+    }
 
-    r_3 = {1:('a','ax'),
+    r_3 = {
+        1:('a','ax'),
         2:('a','x.'),
-        3:('f','ff')}
+        3:('f','ff')
+    }
 
-    m_rules = {1:{},
-            2:r_2,
-            3:r_3,
-            4:{}}
+    m_rules = {
+        2:r_2,
+        3:r_3,
+    }
 
-    p_rules = {1:[],
-            2:[(3,4)],
-            3:[],
-            4:[]}
+    p_rules = {
+        2:[(3,4)],
+    }
+
     i0 = 4
     return PSystem(V=alphabet, base_struct=struct, m_objects=m_objects, m_rules=m_rules, p_rules=p_rules, i0=i0)
 
 
-
-# problem_nsquared().while_evolve(verbose=True)
+problem_nsquared().while_evolve(verbose=True)
 
 # k_divides_n(15,3).while_evolve(verbose=True)
 # k_divides_n(15,4).while_evolve(verbose=True)

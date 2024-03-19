@@ -130,7 +130,7 @@ class PSystem:
         """
         # muestra por pantalla cada estado después de aplicar una regla
         #print("\n--------------------------------------------------------------------------------------------\n")
-        print()
+        if verbose: print()
         feasible_rules = self.get_feasible_rules()
         while(feasible_rules != []):
             if verbose: 
@@ -138,8 +138,9 @@ class PSystem:
                 print("\n--------------------------------------------------------------------------------------------\n")
             self.evolve(feasible_rules, verbose)
             feasible_rules = self.get_feasible_rules()
-        self.print_system()
-        print("\n============================================================================================\n")
+        if verbose:
+            self.print_system()
+            print("\n============================================================================================\n")
         # objectos tras aplicar todas las iteraciones posibles en la región de salida
         print(sorted(self.membranes[self.outRegion].objects.items()))
 
