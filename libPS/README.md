@@ -805,7 +805,7 @@ The best way to understand it is with an example to compare, the example is goin
         <tr>
             <td align="center">PSystem</td>
             <td align="center">m_rules</td>
-            <td align="center">{ 0 : enviroment.rules, 1 : memb1.rules,<br>2 : memb2.rules,<br>3 : memb3.rules }</td>
+            <td align="center">{ 0 : enviroment.rules,<br>1 : memb1.rules,<br>2 : memb2.rules,<br>3 : memb3.rules }</td>
             <td align="center">R<sub>1</sub>, R<sub>2</sub>, R<sub>3</sub></td>
         </tr>
     </tbody>
