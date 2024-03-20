@@ -329,7 +329,7 @@ membrane: 1 | n_times: 1 -> rule '1':  ('dcx', 'a3')
 
 ## Examples with plasmids
 
-### Arithmetic substraction. *m* - *n*
+### Arithmetical substraction. *m* - *n*
 
 A **P** System that makes an arithmetic substraction operation between *m* and *n*.
 
@@ -415,7 +415,7 @@ membrane: 3 | n_times: 4 -> rule 'P21':  ('ab', 'c0')
 [('a', 0), ('b', 6), ('c', 0), ('p', 0), ('q', 0)]
 ```
 
-### Mathematic product. *m* * *n*
+### Mathematical product. *m* * *n*
 
 A **P** System that makes product operation between *m* and *n*.
 
@@ -581,6 +581,8 @@ membrane: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
 
 Using as example a **P** system deciding whether _k_ divides _n_, which was used as example of use before:
 
+![A **P** system deciding whether k divides n](assets/PSystem_k_divides_n.png)
+
 <table>
     <thead>
         <tr>
@@ -595,7 +597,7 @@ Using as example a **P** system deciding whether _k_ divides _n_, which was used
             <td align="center">PSystem <br> All membs</td>
             <td align="center">alphabet</td>
             <td align="center">['a','c','x','d']</td>
-            <td align="center">{a,c,x,d}</td>
+            <td align="center">{ a, c, x, d }</td>
         </tr>
         <tr>
             <td align="center">PSystem</td>
@@ -625,13 +627,13 @@ Using as example a **P** system deciding whether _k_ divides _n_, which was used
             <td align="center">memb1</td>
             <td align="center">rules</td>
             <td align="center">{ 1: ( 'dcx', 'a3' )}</td>
-            <td align="center">{ dcc' &rarr; (a, in<sub>3</sub>)}</td>
+            <td align="center">dcx &rarr; (a, in<sub>3</sub>)</td>
         </tr>
         <tr>
             <td align="center">memb2</td>
             <td align="center">rules</td>
             <td align="center">{ 1: ( 'ac', 'x' ),<br>2: ( 'ax', 'c' ),<br>3: ( 'd', 'd.' ) }</td>
-            <td align="center">{ r1: ac &rarr; c',<br>r2: ac' &rarr; c,<br>r3: d &rarr; d&delta; }</td>
+            <td align="center">r1: ac &rarr; x,<br>r2: ax &rarr; c,<br>r3: d &rarr; d&delta;</td>
         </tr>
         <tr>
             <td align="center">memb3</td>
@@ -708,6 +710,103 @@ Using as example a **P** system deciding whether _k_ divides _n_, which was used
             <td>rule1 more priority than rule2</td>
             <td align="center">( 1, 2 )</td>
             <td align="center">r1 > r2</td>
+        </tr>
+    </tbody>
+</table>
+
+#### Plasmids
+Plasmids in the rule must go before the objects, example: ("P1a", "P1a0") indicates that if the plasmid 'P1' and an 'a' are in the membrane it will keep the plasmids and will take out the a.
+To interact with plasmids between membranes is not possible do it as with objects. But it is possible to interact with objects in the same way as with plasmids.
+
+#### Other form to represent rules, also supports plasmids and multiple membranes checking
+It allows operating with plasmids between membranes, and also allows checking across multiple membranes. To do this, the structure of the membranes is defined, along with the objects/plasmids within each membrane.
+The structure is define by, first the elements in the membrane that the rule belongs to, then open square brackets to represent a child from the membrane, the elements of this child membrane and closes the square bracket and following it a number that indicates the child membrane id. Example: ("P1q[a]2", "r[P1a]2"). It could be more complex, as example: ("P1P2ac[P3b[d]2[e]3]1", "P2P3b[P1ac[e]2[d]3]1")
+
+The best way to understand it is with an example to compare, the example is going to be the Mathematical Product **P** System, represented before:
+
+![A **P** System doing *m* * *n*](assets/PSystem_mathematic_product.png)
+
+<table>
+    <thead>
+        <tr>
+            <th>Object</th>
+            <th>Parameter</th>
+            <th>In code</th>
+            <th>In traditional notation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td align="center">PSystem <br> All membs</td>
+            <td align="center">alphabet</td>
+            <td align="center">['a','b','p','x','q','r','t','s']</td>
+            <td align="center">{ a, b, p, x, q, r, t, s }</td>
+        </tr>
+        <tr>
+            <td align="center">PSystem</td>
+            <td align="center">plasmids & its rules</td>
+            <td align="center">{ "P1" : { "P11" : ( 'ba', 'b' ) },<br>"P2" : { "P21" : ( 'a', "ab0" ) } }</td>
+            <td align="center">P1: { ba &rarr; b } <br>P2: { a &rarr; a, ( b, out ) } </td>
+        </tr>
+        <tr>
+            <td align="center">PSystem</td>
+            <td align="center">struct</td>
+            <td align="center">'122331'</td>
+            <td align="center">[<sub>1</sub> [<sub>2</sub> ]<sub>2</sub> [<sub>3</sub> ]<sub>3</sub> ]<sub>1</sub></td>
+        </tr>
+        <tr>
+            <td align="center">enviroment</td>
+            <td align="center">plasmids</td>
+            <td align="center">[ 'P1', 'P2' ]</td>
+            <td align="center">P1, P2</td>
+        </tr>
+        <tr>
+            <td align="center">memb1</td>
+            <td align="center">objects</td>
+            <td align="center">'p'</td>
+            <td align="center">p</td>
+        </tr>
+        <tr>
+            <td align="center">memb2</td>
+            <td align="center">objects</td>
+            <td align="center">b + 'a'*n</td>
+            <td align="center">b a<sup>n</sup></td>
+        </tr>
+        <tr>
+            <td align="center">memb3</td>
+            <td align="center">objects</td>
+            <td align="center">b + 'a'*m</td>
+            <td align="center">b a<sup>m</sup></td>
+        </tr>
+        <tr>
+            <td align="center">enviroment</td>
+            <td align="center">rules</td>
+            <td align="center">{ 1 : ( "P1[p]1", "[P1x]1" ),<br>2 : ( "P2[x]1", "[P2q]1" ) }</td>
+            <td align="center">P1 [<sub>1</sub> p ]<sub>1</sub> &rarr; [<sub>1</sub> P1x ]<sub>1</sub><br>P2 [<sub>1</sub> x ]<sub>1</sub> &rarr; [<sub>1</sub> P2q ]<sub>1</sub></td>
+        </tr>
+        <tr>
+            <td align="center">memb1</td>
+            <td align="center">rules</td>
+            <td align="center">{ 1 : ( "P1q[a]2", "r[P1a]2" ),<br>2 : ( "r[P1]2", "P1s[]2" ),<br>3 : ( "P2s[]3", "t[P2]3" ),<br>4 : ( "t[P2]3", "P2q[]3" ) }</td>
+            <td align="center">P1q [<sub>2</sub> a ]<sub>2</sub> &rarr; r [<sub>2</sub> P1a ]<sub>2</sub> <br>r [<sub>2</sub> P1 ]<sub>2</sub> &rarr; P1s [<sub>2</sub> ]<sub>2</sub><br>P2s [<sub>3</sub> ]<sub>3</sub> &rarr; t [<sub>3</sub> P2 ]<sub>3</sub><br>t [<sub>3</sub>P2 ]<sub>3</sub> &rarr; P2q [<sub>3</sub> ]<sub>3</sub></td>
+        </tr>
+        <tr>
+            <td align="center">memb2</td>
+            <td align="center">rules</td>
+            <td align="center">{ }</td>
+            <td align="center">&Oslash;</td>
+        </tr>
+        <tr>
+            <td align="center">memb3</td>
+            <td align="center">rules</td>
+            <td align="center">{ }</td>
+            <td align="center">&Oslash;</td>
+        </tr>
+        <tr>
+            <td align="center">PSystem</td>
+            <td align="center">m_rules</td>
+            <td align="center">{ 0 : enviroment.rules, 1 : memb1.rules,<br>2 : memb2.rules,<br>3 : memb3.rules }</td>
+            <td align="center">R<sub>1</sub>, R<sub>2</sub>, R<sub>3</sub></td>
         </tr>
     </tbody>
 </table>
