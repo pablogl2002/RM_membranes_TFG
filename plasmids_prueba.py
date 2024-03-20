@@ -76,10 +76,12 @@ def producto_aritmetico(n, m):
 
     return PSystem(H=plasmids, V=alphabet, base_struct=struct, m_objects=m_objects, m_plasmids=m_plasmids, m_rules=m_rules, i0=i0)
 
-# resta_aritmetica(10,16).while_evolve(verbose=True)
-# producto_aritmetico(5, 5).while_evolve(verbose=True)
 
-print("\nresta_aritmetica(10,16) ====>")
-resta_aritmetica(10,16).while_evolve()
-print("\nproducto_aritmetico(9,3) ====>")
-producto_aritmetico(9,3).while_evolve()
+# resta_aritmetica(4,10).while_evolve(verbose=True)
+# producto_aritmetico(4, 5).while_evolve(verbose=True)
+
+# print("\nresta_aritmetica(10,16) ====>")
+# for i in range(100):
+#     resta_aritmetica(10,16).while_evolve()
+# print("\nproducto_aritmetico(9,3) ====>")
+    # producto_aritmetico(9,3).while_evolve()

@@ -14,7 +14,6 @@ class Membrane:
             rules (dict, optional): Membrane's rules | key: rule_id, value:list = tuple (lhs, rhs). Defaults to {}.
             p_rules (dict, optional): Rules priority in membrane. Defaults to {}.
         """
-
         self.alphabet = V               # membrane's alphabet
         self.id = id                    # membrane's id
         self.parent = parent            # parent's id
@@ -38,7 +37,6 @@ class Membrane:
         Args:
             child (int): child's id
         """
-
         self.childs.add(child)
         self.rhs_alphabet.add(str(child))
 
@@ -49,7 +47,6 @@ class Membrane:
         Args:
             child (int): child's id
         """
-
         self.childs.remove(child)
         self.rhs_alphabet.remove(str(child))
     
@@ -60,7 +57,6 @@ class Membrane:
         Args:
             objects (str): objects to add in the membrane
         """
-
         suma = 0
         prev_objs = self.objects
         for obj in self.alphabet:

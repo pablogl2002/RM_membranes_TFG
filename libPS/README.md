@@ -119,97 +119,85 @@ ps.while_evolve(verbose=True)
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 3 | n_times: 1 -> rule '3':  ('f', 'ff')
-memb_id: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
-[1 '' [2 '' [3 'xffa' ]3[4 '' ]4]2]1
+membrane: 3 | n_times: 1 -> rule '3':  ('f', 'ff')
+membrane: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
+[1 '' [2 '' [3 'ffax' ]3[4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 3 | n_times: 2 -> rule '3':  ('f', 'ff')
-memb_id: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
-[1 '' [2 '' [3 'xxffffa' ]3[4 '' ]4]2]1
+membrane: 3 | n_times: 2 -> rule '3':  ('f', 'ff')
+membrane: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
+[1 '' [2 '' [3 'ffffaxx' ]3[4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 3 | n_times: 4 -> rule '3':  ('f', 'ff')
-memb_id: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
-[1 '' [2 '' [3 'xxxffffffffa' ]3[4 '' ]4]2]1
+membrane: 3 | n_times: 4 -> rule '3':  ('f', 'ff')
+membrane: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
+[1 '' [2 '' [3 'ffffffffaxxx' ]3[4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 3 | n_times: 8 -> rule '3':  ('f', 'ff')
-memb_id: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
-[1 '' [2 '' [3 'xxxxffffffffffffffffa' ]3[4 '' ]4]2]1
+membrane: 3 | n_times: 8 -> rule '3':  ('f', 'ff')
+membrane: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
+[1 '' [2 '' [3 'ffffffffffffffffaxxxx' ]3[4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 3 | n_times: 16 -> rule '3':  ('f', 'ff')
-memb_id: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
-[1 '' [2 '' [3 'xxxxxffffffffffffffffffffffffffffffffa' ]3[4 '' ]4]2]1
+membrane: 3 | n_times: 16 -> rule '3':  ('f', 'ff')
+membrane: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
+[1 '' [2 '' [3 'ffffffffffffffffffffffffffffffffaxxxxx' ]3[4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 3 | n_times: 32 -> rule '3':  ('f', 'ff')
-memb_id: 3 | n_times: 1 -> rule '1':  ('a', 'ax')
-[1 '' [2 '' [3 'xxxxxxffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffa' ]3[4 '' ]4]2]1
+membrane: 3 | n_times: 32 -> rule '3':  ('f', 'ff')
+membrane: 3 | n_times: 1 -> rule '2':  ('a', 'x.')
+[1 '' [2 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffxxxxxx' [4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 3 | n_times: 64 -> rule '3':  ('f', 'ff')
-memb_id: 3 | n_times: 1 -> rule '2':  ('a', 'x.')
-[1 '' [2 'xxxxxxxffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff' [4 '' ]4]2]1
+membrane: 2 | n_times: 6 -> rule '1':  ('x', 'b')
+membrane: 2 | n_times: 32 -> rule '3':  ('ff', 'f')
+[1 '' [2 'ffffffffffffffffffffffffffffffffbbbbbb' [4 '' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 7 -> rule '1':  ('x', 'b')
-memb_id: 2 | n_times: 64 -> rule '3':  ('ff', 'f')
-[1 '' [2 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffbbbbbbb' [4 '' ]4]2]1
+membrane: 2 | n_times: 6 -> rule '2':  ('b', 'bc4')
+membrane: 2 | n_times: 16 -> rule '3':  ('ff', 'f')
+[1 '' [2 'ffffffffffffffffbbbbbb' [4 'cccccc' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 7 -> rule '2':  ('b', 'bc4')
-memb_id: 2 | n_times: 32 -> rule '3':  ('ff', 'f')
-[1 '' [2 'ffffffffffffffffffffffffffffffffbbbbbbb' [4 'ccccccc' ]4]2]1
+membrane: 2 | n_times: 6 -> rule '2':  ('b', 'bc4')
+membrane: 2 | n_times: 8 -> rule '3':  ('ff', 'f')
+[1 '' [2 'ffffffffbbbbbb' [4 'cccccccccccc' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 7 -> rule '2':  ('b', 'bc4')
-memb_id: 2 | n_times: 16 -> rule '3':  ('ff', 'f')
-[1 '' [2 'ffffffffffffffffbbbbbbb' [4 'cccccccccccccc' ]4]2]1
+membrane: 2 | n_times: 6 -> rule '2':  ('b', 'bc4')
+membrane: 2 | n_times: 4 -> rule '3':  ('ff', 'f')
+[1 '' [2 'ffffbbbbbb' [4 'cccccccccccccccccc' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 7 -> rule '2':  ('b', 'bc4')
-memb_id: 2 | n_times: 8 -> rule '3':  ('ff', 'f')
-[1 '' [2 'ffffffffbbbbbbb' [4 'ccccccccccccccccccccc' ]4]2]1
+membrane: 2 | n_times: 6 -> rule '2':  ('b', 'bc4')
+membrane: 2 | n_times: 2 -> rule '3':  ('ff', 'f')
+[1 '' [2 'ffbbbbbb' [4 'cccccccccccccccccccccccc' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 7 -> rule '2':  ('b', 'bc4')
-memb_id: 2 | n_times: 4 -> rule '3':  ('ff', 'f')
-[1 '' [2 'ffffbbbbbbb' [4 'cccccccccccccccccccccccccccc' ]4]2]1
+membrane: 2 | n_times: 6 -> rule '2':  ('b', 'bc4')
+membrane: 2 | n_times: 1 -> rule '3':  ('ff', 'f')
+[1 '' [2 'fbbbbbb' [4 'cccccccccccccccccccccccccccccc' ]4]2]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 7 -> rule '2':  ('b', 'bc4')
-memb_id: 2 | n_times: 2 -> rule '3':  ('ff', 'f')
-[1 '' [2 'ffbbbbbbb' [4 'ccccccccccccccccccccccccccccccccccc' ]4]2]1
-
---------------------------------------------------------------------------------------------
-
-memb_id: 2 | n_times: 7 -> rule '2':  ('b', 'bc4')
-memb_id: 2 | n_times: 1 -> rule '3':  ('ff', 'f')
-[1 '' [2 'fbbbbbbb' [4 'cccccccccccccccccccccccccccccccccccccccccc' ]4]2]1
-
---------------------------------------------------------------------------------------------
-
-memb_id: 2 | n_times: 7 -> rule '2':  ('b', 'bc4')
-memb_id: 2 | n_times: 1 -> rule '4':  ('f', 'a.')
-[1 'abbbbbbb' [4 'ccccccccccccccccccccccccccccccccccccccccccccccccc' ]4]1
+membrane: 2 | n_times: 6 -> rule '2':  ('b', 'bc4')
+membrane: 2 | n_times: 1 -> rule '4':  ('f', 'a.')
+[1 'abbbbbb' [4 'cccccccccccccccccccccccccccccccccccc' ]4]1
 
 ============================================================================================
 
-[('a', 0), ('b', 0), ('c', 49), ('f', 0), ('x', 0)]
+[('a', 0), ('b', 0), ('c', 36), ('f', 0), ('x', 0)]
 ```
 
 ### k divides n
@@ -261,84 +249,82 @@ ps.while_evolve(verbose=True)
 #### Output
 ```terminal
 
-[1 '' [2 'aaaaaaaaaaaaaaadccc' ]2[3 'a' ]3]1
+[1 '' [2 'cccdaaaaaaaaaaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 3 -> rule '1':  ('ac', 'x')
-[1 '' [2 'aaaaaaaaaaaadxxx' ]2[3 'a' ]3]1
+membrane: 2 | n_times: 3 -> rule '1':  ('ac', 'x')
+[1 '' [2 'dxxxaaaaaaaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 3 -> rule '2':  ('ax', 'c')
-[1 '' [2 'aaaaaaaaadccc' ]2[3 'a' ]3]1
+membrane: 2 | n_times: 3 -> rule '2':  ('ax', 'c')
+[1 '' [2 'cccdaaaaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 3 -> rule '1':  ('ac', 'x')
-[1 '' [2 'aaaaaadxxx' ]2[3 'a' ]3]1
+membrane: 2 | n_times: 3 -> rule '1':  ('ac', 'x')
+[1 '' [2 'dxxxaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 3 -> rule '2':  ('ax', 'c')
-[1 '' [2 'aaadccc' ]2[3 'a' ]3]1
+membrane: 2 | n_times: 3 -> rule '2':  ('ax', 'c')
+[1 '' [2 'cccdaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 3 -> rule '1':  ('ac', 'x')
+membrane: 2 | n_times: 3 -> rule '1':  ('ac', 'x')
 [1 '' [2 'dxxx' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 1 -> rule '3':  ('d', 'd.')
+membrane: 2 | n_times: 1 -> rule '3':  ('d', 'd.')
 [1 'dxxx' [3 'a' ]3]1
 
 ============================================================================================
 
 [('a', 1), ('c', 0), ('d', 0), ('x', 0)]
-
 ```
 
 In this other case _k_ = 4 not divides _n_ = 15.
 
 ```terminal
 
-[1 '' [2 'ccccdaaaaaaaaaaaaaaa' ]2[3 'a' ]3]1
+[1 '' [2 'dccccaaaaaaaaaaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 4 -> rule '1':  ('ac', 'x')
-[1 '' [2 'xxxxdaaaaaaaaaaa' ]2[3 'a' ]3]1
+membrane: 2 | n_times: 4 -> rule '1':  ('ac', 'x')
+[1 '' [2 'dxxxxaaaaaaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 4 -> rule '2':  ('ax', 'c')
-[1 '' [2 'ccccdaaaaaaa' ]2[3 'a' ]3]1
+membrane: 2 | n_times: 4 -> rule '2':  ('ax', 'c')
+[1 '' [2 'dccccaaaaaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 4 -> rule '1':  ('ac', 'x')
-[1 '' [2 'xxxxdaaa' ]2[3 'a' ]3]1
+membrane: 2 | n_times: 4 -> rule '1':  ('ac', 'x')
+[1 '' [2 'dxxxxaaa' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 3 -> rule '2':  ('ax', 'c')
-[1 '' [2 'cccxd' ]2[3 'a' ]3]1
+membrane: 2 | n_times: 3 -> rule '2':  ('ax', 'c')
+[1 '' [2 'dcccx' ]2[3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 2 | n_times: 1 -> rule '3':  ('d', 'd.')
-[1 'cccxd' [3 'a' ]3]1
+membrane: 2 | n_times: 1 -> rule '3':  ('d', 'd.')
+[1 'dcccx' [3 'a' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '1':  ('dcx', 'a3')
+membrane: 1 | n_times: 1 -> rule '1':  ('dcx', 'a3')
 [1 'cc' [3 'aa' ]3]1
 
 ============================================================================================
 
 [('a', 2), ('c', 0), ('d', 0), ('x', 0)]
-
 ```
 
 ## Examples with plasmids
@@ -399,29 +385,29 @@ ps.while_evolve(verbose=True)
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 0 | n_times: 1 -> rule '1':  ('P1[p]1', 'p[P1]1')
+enviroment | n_times: 1 -> rule '1':  ('P1[p]1', 'p[P1]1')
  'P2' 'p'  [1 'P1' 'q'  [2 '' 'aaaa' ]2 [3 '' 'bbbbbbbbbb' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 0 | n_times: 1 -> rule '2':  ('P2[q]1', 'q[P2]1')
-memb_id: 1 | n_times: 1 -> rule '1':  ('P1[]2', '[P1]2')
+enviroment | n_times: 1 -> rule '2':  ('P2[q]1', 'q[P2]1')
+membrane: 1 | n_times: 1 -> rule '1':  ('P1[]2', '[P1]2')
  '' 'pq'  [1 'P2' ''  [2 'P1' 'aaaa' ]2 [3 '' 'bbbbbbbbbb' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '2':  ('P2[]3', '[P2]3')
-memb_id: 2 | n_times: 4 -> rule 'P11':  ('a', 'a0')
+membrane: 1 | n_times: 1 -> rule '2':  ('P2[]3', '[P2]3')
+membrane: 2 | n_times: 4 -> rule 'P11':  ('a', 'a0')
  '' 'pq'  [1 '' 'aaaa'  [2 'P1' '' ]2 [3 'P2' 'bbbbbbbbbb' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 4 -> rule '3':  ('a', 'a3')
+membrane: 1 | n_times: 4 -> rule '3':  ('a', 'a3')
  '' 'pq'  [1 '' ''  [2 'P1' '' ]2 [3 'P2' 'aaaabbbbbbbbbb' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 3 | n_times: 4 -> rule 'P21':  ('ab', 'c0')
+membrane: 3 | n_times: 4 -> rule 'P21':  ('ab', 'c0')
  '' 'pq'  [1 '' 'cccc'  [2 'P1' '' ]2 [3 'P2' 'bbbbbb' ]3]1
 
 ============================================================================================
@@ -488,101 +474,101 @@ ps.while_evolve(verbose=True)
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 0 | n_times: 1 -> rule '1':  ('P1[p]1', '[P1x]1')
+enviroment | n_times: 1 -> rule '1':  ('P1[p]1', '[P1x]1')
  'P2' ''  [1 'P1' 'x'  [2 '' 'aaaab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 0 | n_times: 1 -> rule '2':  ('P2[x]1', '[P2q]1')
+enviroment | n_times: 1 -> rule '2':  ('P2[x]1', '[P2q]1')
  '' ''  [1 'P1P2' 'q'  [2 '' 'aaaab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '1':  ('P1q[a]2', 'r[P1a]2')
+membrane: 1 | n_times: 1 -> rule '1':  ('P1q[a]2', 'r[P1a]2')
  'P1' ''  [1 'P2' 'r'  [2 'P1' 'aaaab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '2':  ('r[P1]2', 'P1s[]2')
-memb_id: 2 | n_times: 1 -> rule 'P11':  ('ba', 'b')
- '' ''  [1 'P1P2' 's'  [2 '' 'aaab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '2':  ('r[P1]2', 'P1s[]2')
+membrane: 2 | n_times: 1 -> rule 'P11':  ('ba', 'b')
+ 'P1' ''  [1 'P1P2' 's'  [2 '' 'aaab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '3':  ('P2s[]3', 't[P2]3')
- 'P2' ''  [1 'P1' 't'  [2 '' 'aaab' ]2 [3 'P2' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '3':  ('P2s[]3', 't[P2]3')
+ 'P1P2' ''  [1 'P1' 't'  [2 '' 'aaab' ]2 [3 'P2' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '4':  ('t[P2]3', 'P2q[]3')
-memb_id: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
- '' ''  [1 'P1P2' 'bbbbbq'  [2 '' 'aaab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '4':  ('t[P2]3', 'P2q[]3')
+membrane: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
+ 'P1P2' ''  [1 'P1P2' 'bbbbbq'  [2 '' 'aaab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '1':  ('P1q[a]2', 'r[P1a]2')
- 'P1' ''  [1 'P2' 'bbbbbr'  [2 'P1' 'aaab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '1':  ('P1q[a]2', 'r[P1a]2')
+ 'P1P2' ''  [1 'P2' 'bbbbbr'  [2 'P1' 'aaab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '2':  ('r[P1]2', 'P1s[]2')
-memb_id: 2 | n_times: 1 -> rule 'P11':  ('ba', 'b')
- '' ''  [1 'P1P2' 'bbbbbs'  [2 '' 'aab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '2':  ('r[P1]2', 'P1s[]2')
+membrane: 2 | n_times: 1 -> rule 'P11':  ('ba', 'b')
+ 'P1P2' ''  [1 'P1P2' 'bbbbbs'  [2 '' 'aab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '3':  ('P2s[]3', 't[P2]3')
- 'P2' ''  [1 'P1' 'bbbbbt'  [2 '' 'aab' ]2 [3 'P2' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '3':  ('P2s[]3', 't[P2]3')
+ 'P1P2' ''  [1 'P1' 'bbbbbt'  [2 '' 'aab' ]2 [3 'P2' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '4':  ('t[P2]3', 'P2q[]3')
-memb_id: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
- '' ''  [1 'P1P2' 'bbbbbbbbbbq'  [2 '' 'aab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '4':  ('t[P2]3', 'P2q[]3')
+membrane: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
+ 'P1P2' ''  [1 'P1P2' 'bbbbbbbbbbq'  [2 '' 'aab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '1':  ('P1q[a]2', 'r[P1a]2')
- 'P1' ''  [1 'P2' 'bbbbbbbbbbr'  [2 'P1' 'aab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '1':  ('P1q[a]2', 'r[P1a]2')
+ 'P1P2' ''  [1 'P2' 'bbbbbbbbbbr'  [2 'P1' 'aab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '2':  ('r[P1]2', 'P1s[]2')
-memb_id: 2 | n_times: 1 -> rule 'P11':  ('ba', 'b')
- '' ''  [1 'P1P2' 'bbbbbbbbbbs'  [2 '' 'ab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '2':  ('r[P1]2', 'P1s[]2')
+membrane: 2 | n_times: 1 -> rule 'P11':  ('ba', 'b')
+ 'P1P2' ''  [1 'P1P2' 'bbbbbbbbbbs'  [2 '' 'ab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '3':  ('P2s[]3', 't[P2]3')
- 'P2' ''  [1 'P1' 'bbbbbbbbbbt'  [2 '' 'ab' ]2 [3 'P2' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '3':  ('P2s[]3', 't[P2]3')
+ 'P1P2' ''  [1 'P1' 'bbbbbbbbbbt'  [2 '' 'ab' ]2 [3 'P2' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '4':  ('t[P2]3', 'P2q[]3')
-memb_id: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
- '' ''  [1 'P1P2' 'bbbbbbbbbbbbbbbq'  [2 '' 'ab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '4':  ('t[P2]3', 'P2q[]3')
+membrane: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
+ 'P1P2' ''  [1 'P1P2' 'bbbbbbbbbbbbbbbq'  [2 '' 'ab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '1':  ('P1q[a]2', 'r[P1a]2')
- 'P1' ''  [1 'P2' 'bbbbbbbbbbbbbbbr'  [2 'P1' 'ab' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '1':  ('P1q[a]2', 'r[P1a]2')
+ 'P1P2' ''  [1 'P2' 'bbbbbbbbbbbbbbbr'  [2 'P1' 'ab' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '2':  ('r[P1]2', 'P1s[]2')
-memb_id: 2 | n_times: 1 -> rule 'P11':  ('ba', 'b')
- '' ''  [1 'P1P2' 'bbbbbbbbbbbbbbbs'  [2 '' 'b' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '2':  ('r[P1]2', 'P1s[]2')
+membrane: 2 | n_times: 1 -> rule 'P11':  ('ba', 'b')
+ 'P1P2' ''  [1 'P1P2' 'bbbbbbbbbbbbbbbs'  [2 '' 'b' ]2 [3 '' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '3':  ('P2s[]3', 't[P2]3')
- 'P2' ''  [1 'P1' 'bbbbbbbbbbbbbbbt'  [2 '' 'b' ]2 [3 'P2' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '3':  ('P2s[]3', 't[P2]3')
+ 'P1P2' ''  [1 'P1' 'bbbbbbbbbbbbbbbt'  [2 '' 'b' ]2 [3 'P2' 'aaaaab' ]3]1
 
 --------------------------------------------------------------------------------------------
 
-memb_id: 1 | n_times: 1 -> rule '4':  ('t[P2]3', 'P2q[]3')
-memb_id: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
- '' ''  [1 'P1P2' 'bbbbbbbbbbbbbbbbbbbbq'  [2 '' 'b' ]2 [3 '' 'aaaaab' ]3]1
+membrane: 1 | n_times: 1 -> rule '4':  ('t[P2]3', 'P2q[]3')
+membrane: 3 | n_times: 5 -> rule 'P21':  ('a', 'ab0')
+ 'P1P2' ''  [1 'P1P2' 'bbbbbbbbbbbbbbbbbbbbq'  [2 '' 'b' ]2 [3 '' 'aaaaab' ]3]1
 
 ============================================================================================
 
@@ -609,7 +595,7 @@ Using as example a **P** system deciding whether _k_ divides _n_, which was used
             <td align="center">PSystem <br> All membs</td>
             <td align="center">alphabet</td>
             <td align="center">['a','c','x','d']</td>
-            <td align="center">{a,c,c',d}</td>
+            <td align="center">{a,c,x,d}</td>
         </tr>
         <tr>
             <td align="center">PSystem</td>
