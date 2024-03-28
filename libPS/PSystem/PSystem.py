@@ -532,13 +532,13 @@ class PSystem:
         parent_id = self.membranes[memb_id].parent
         if parent_id != None:
             accessible_plasmids = self.membranes[parent_id].plasmids
-            
+
         for child in self.membranes[memb_id].childs:
 ## aquí se añade el plasmido a veces muy por la cara
             accessible_plasmids.update(self.membranes[child].plasmids)
 
         return accessible_plasmids
-    
+
 
     def print_system(self):
         """Print system's structure

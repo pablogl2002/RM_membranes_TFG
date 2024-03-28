@@ -6,7 +6,6 @@
             "type": "debugpy",
             "request": "launch",
             "program": "RMoperations.py",
-            "console": "externalTerminal"
         }
     ]
 }
