@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug: RMOperations",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "RMoperations.py",
+            "console": "externalTerminal"
+        }
+    ]
+}

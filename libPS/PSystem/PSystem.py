@@ -254,10 +254,6 @@ class PSystem:
         Returns:
             bool: returns if the rule dissolves the membrane
         """
-        print("plasmids 0 ", self.membranes[0].plasmids)
-        print("membs_lhs ", membs_lhs)
-        print("membs_rhs ", membs_rhs)
-
         for lhs, memb_id in membs_lhs:        
 
             # separa parte izquierda en objetos objetos y plasmidos
@@ -538,9 +534,8 @@ class PSystem:
             accessible_plasmids = self.membranes[parent_id].plasmids
             
         for child in self.membranes[memb_id].childs:
-            print(self.membranes[child].plasmids)
+## aquí se añade el plasmido a veces muy por la cara
             accessible_plasmids.update(self.membranes[child].plasmids)
-            print(self.membranes[child].plasmids)
 
         return accessible_plasmids
     
