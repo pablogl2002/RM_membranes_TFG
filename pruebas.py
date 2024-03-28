@@ -117,7 +117,7 @@ def problem_nsquared():
 # k_divides_n2(15,4).while_evolve(verbose=True)
 
 # print("\nnsquared ====>")
-# problem_nsquared().while_evolve()
+# problem_nsquared().while_evolve(verbose=True)
 
 # print("\nk_divides_n(15,3) ====>")
 # k_divides_n(15,3).while_evolve()

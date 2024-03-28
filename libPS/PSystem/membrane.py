@@ -28,7 +28,7 @@ class Membrane:
         self.rhs_alphabet.add('.')  # se añade al alfabeto de la parte derecha un . para disolver membrana
 
         # se añaden los objetos iniciales a la membrana
-        self.add_objects(objects)
+        self._add_objects(objects)
 
 
     def add_child(self, child:int):
@@ -51,7 +51,7 @@ class Membrane:
         self.rhs_alphabet.remove(str(child))
     
 
-    def add_objects(self, objects:str):
+    def _add_objects(self, objects:str):
         """Add objects to the membranes.
 
         Args:

@@ -28,7 +28,7 @@ Evolve the system until finish all possible iterations. If verbose is True, prin
 ### ps.evolve(*feasible_rules*, *verbose* = False)
 Evolve the system choosing a random membrane from feasible_rules list whose items are a tuple of membrane's id and their rules to apply. If verbose is True, prints the membrane where the rules are being applied, the rules applied and the number of times each rule has been applied.
 
-### ps.get_fesible_rules()
+### ps.get_feasible_rules()
 Get feasible rules from all the membranes in the current state.
 
 ### ps.get_memb_feasible_rules(*memb_id* )
@@ -715,7 +715,7 @@ Using as example a **P** system deciding whether _k_ divides _n_, which was used
 </table>
 
 #### Plasmids
-Plasmids in the rule must go before the objects, example: ("P1a", "P1a0") indicates that if the plasmid 'P1' and an 'a' are in the membrane it will keep the plasmids and will take out the a.
+Plasmids must go before the objects in the rule, example: ("P1a", "P1a0") indicates that if the plasmid 'P1' and an 'a' are in the membrane it will keep the plasmids and will take out the 'a'.
 To interact with plasmids between membranes is not possible do it as with objects. But it is possible to interact with objects in the same way as with plasmids.
 
 #### Other form to represent rules, also supports plasmids and multiple membranes checking

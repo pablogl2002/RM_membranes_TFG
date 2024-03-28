@@ -254,6 +254,10 @@ class PSystem:
         Returns:
             bool: returns if the rule dissolves the membrane
         """
+        print("plasmids 0 ", self.membranes[0].plasmids)
+        print("membs_lhs ", membs_lhs)
+        print("membs_rhs ", membs_rhs)
+
         for lhs, memb_id in membs_lhs:        
 
             # separa parte izquierda en objetos objetos y plasmidos
@@ -342,7 +346,7 @@ class PSystem:
         """
         feasible_rules = []
         # recorre todas las membranas y va añadiendo en feasible_rules las reglas factibles
-        for id, memb in self.membranes.items():
+        for id, _ in self.membranes.items():
             # obtiene las reglas factibles de una membrana
             all_f_rules = list(self.get_memb_feasible_rules(id))
             rules = random.choice(all_f_rules)
@@ -478,7 +482,6 @@ class PSystem:
 
             # para cada plasmido en la regla comprueba si se encuentra en los plásmidos que pueden entrar a la membrana
             for p in plasmids_lhs:
-                
                 if p not in self.membranes[memb_id].plasmids:
                     return False
             
@@ -535,11 +538,12 @@ class PSystem:
             accessible_plasmids = self.membranes[parent_id].plasmids
             
         for child in self.membranes[memb_id].childs:
+            print(self.membranes[child].plasmids)
             accessible_plasmids.update(self.membranes[child].plasmids)
+            print(self.membranes[child].plasmids)
 
-                
         return accessible_plasmids
-
+    
 
     def print_system(self):
         """Print system's structure

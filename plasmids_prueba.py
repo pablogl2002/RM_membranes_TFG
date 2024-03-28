@@ -66,7 +66,7 @@ def producto_aritmetico(n, m):
         3:("P2s[]3","t[P2]3"),
         4:("t[P2]3","P2q[]3"),
     }
-
+    
     m_rules = {
         0:r_0,
         1:r_1,
